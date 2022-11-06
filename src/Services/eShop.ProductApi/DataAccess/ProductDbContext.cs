@@ -11,6 +11,7 @@ namespace eShop.ProductApi.DataAccess
         }
 
         public DbSet<CategoryEntity> Category { get; set; }
+        public DbSet<ProductEntity> Product { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

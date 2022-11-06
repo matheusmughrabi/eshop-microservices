@@ -30,15 +30,10 @@ namespace eShop.ProductApi.Entity
             _products.Add(product);
         }
 
-        public void UpdateName(string name)
+        public void Update(string name, string description)
         {
             CategoryGuards.CategoryNameNull(name);
-
             Name = name;
-        }
-
-        public void UpdateDescription(string description)
-        {
             Description = description;
         }
     }
