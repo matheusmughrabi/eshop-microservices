@@ -1,8 +1,7 @@
 using eShop.ProductApi.DataAccess;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using MediatR;
-using eShop.ProductApi.DataAccess.Repositories;
 
 
 // Dependency injection container
@@ -15,8 +14,6 @@ builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 builder.Services.AddDbContext<ProductDbContext>(options => options
     .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 31))));
-
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 

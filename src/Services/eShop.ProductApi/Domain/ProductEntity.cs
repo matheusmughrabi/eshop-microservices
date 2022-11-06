@@ -1,5 +1,4 @@
 ﻿using eShop.ProductApi.Exceptions;
-using eShop.ProductApi.Guards;
 
 namespace eShop.ProductApi.Entity
 {
@@ -9,18 +8,21 @@ namespace eShop.ProductApi.Entity
 
         public ProductEntity(string name, decimal price, string description = null)
         {
-            ProductGuards.NameNull(name);
-            ProductGuards.PriceEqualOrLessThanZero(price);
+            if (name is null)
+                throw new InvalidPropertyValueException("name cannot be null.");
+
+            if (price <= 0)
+                throw new InvalidPropertyValueException("price must be greater than zero.");
 
             Name = name;
             Description = description;
             Price = price;
         }
 
-        public string Name { get; private set; }
-        public string? Description { get; private set; }
-        public decimal Price { get; private set; }
-        public CategoryEntity Category { get; private set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public decimal Price { get; set; }
+        public CategoryEntity Category { get; set; }
 
         public override bool Equals(object? obj)
         {

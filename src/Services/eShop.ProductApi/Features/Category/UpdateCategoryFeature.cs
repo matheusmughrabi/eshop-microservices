@@ -1,9 +1,17 @@
-﻿using eShop.ProductApi.DataAccess.Repositories;
+﻿using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.Notifications;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace eShop.ProductApi.Application.Commands
+namespace eShop.ProductApi.Features.Category
 {
+    public partial class CategoryController
+    {
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryCommand request) => Ok(await _mediator.Send(request));
+    }
+
     public class UpdateCategoryCommand : IRequest<UpdateCategoryCommandResponse>
     {
         public Guid Id { get; set; }
@@ -19,16 +27,16 @@ namespace eShop.ProductApi.Application.Commands
 
     public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, UpdateCategoryCommandResponse>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ProductDbContext _productDbContext;
 
-        public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository)
+        public UpdateCategoryCommandHandler(ProductDbContext productDbContext)
         {
-            _categoryRepository = categoryRepository;
+            _productDbContext = productDbContext;
         }
 
         public async Task<UpdateCategoryCommandResponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryFromDb = await _categoryRepository.GetCategoryById(request.Id);
+            var categoryFromDb = await _productDbContext.Category.FirstOrDefaultAsync(c => c.Id == request.Id);
             if (categoryFromDb == null)
                 return new UpdateCategoryCommandResponse()
                 {
@@ -39,8 +47,10 @@ namespace eShop.ProductApi.Application.Commands
                     }
                 };
 
-            categoryFromDb.Update(request.Name, request.Description);
-            await _categoryRepository.SaveChanges();
+            categoryFromDb.Name = request.Name;
+            categoryFromDb.Description = request.Description;
+
+            await _productDbContext.SaveChangesAsync();
 
             return new UpdateCategoryCommandResponse()
             {

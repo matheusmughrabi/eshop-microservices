@@ -1,10 +1,17 @@
-﻿using eShop.ProductApi.DataAccess.Repositories;
+﻿using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace eShop.ProductApi.Application.Commands
+namespace eShop.ProductApi.Features.Product
 {
+    public partial class ProductController
+    {
+        [HttpPost("Create")]
+        public async Task<IActionResult> CreateProduct(CreateProductCommand request) => Ok(await _mediator.Send(request));
+    }
     public class CreateProductCommand : IRequest<CreateProductCommandResponse>
     {
         public Guid CategoryId { get; set; }
@@ -22,16 +29,16 @@ namespace eShop.ProductApi.Application.Commands
 
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductCommandResponse>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ProductDbContext _productDbContext;
 
-        public CreateProductCommandHandler(ICategoryRepository categoryRepository)
+        public CreateProductCommandHandler(ProductDbContext productDbContext)
         {
-            _categoryRepository = categoryRepository;
+            _productDbContext = productDbContext;
         }
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var categoryFromDb = await _categoryRepository.GetCategoryById(id:request.CategoryId, includeProcuts:true);
+            var categoryFromDb = await _productDbContext.Category.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == request.CategoryId);
             if (categoryFromDb == null)
                 return new CreateProductCommandResponse()
                 {
@@ -46,8 +53,23 @@ namespace eShop.ProductApi.Application.Commands
                     }
                 };
 
-            categoryFromDb.AddProduct(new ProductEntity(request.Name, request.Price, request.Description));
-            await _categoryRepository.SaveChanges();
+            var product = new ProductEntity(request.Name, request.Price, request.Description);
+            if (categoryFromDb.Products.Any(c => c.Equals(product)))
+                return new CreateProductCommandResponse()
+                {
+                    Success = false,
+                    Notifications = new List<Notification>()
+                    {
+                        new Notification()
+                        {
+                            Message = $"A product with name {request.Name} already exists in this category",
+                            Type = ENotificationType.Error
+                        }
+                    }
+                };
+
+            categoryFromDb.Products.Add(new ProductEntity(request.Name, request.Price, request.Description));
+            await _productDbContext.SaveChangesAsync();
 
             return new CreateProductCommandResponse()
             {

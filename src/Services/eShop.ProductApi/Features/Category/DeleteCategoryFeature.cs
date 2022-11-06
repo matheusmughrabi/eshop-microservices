@@ -1,9 +1,16 @@
-﻿using eShop.ProductApi.DataAccess.Repositories;
+﻿using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.Notifications;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace eShop.ProductApi.Application.Commands
+namespace eShop.ProductApi.Features.Category
 {
+    public partial class CategoryController
+    {
+        [HttpPut("Delete")]
+        public async Task<IActionResult> UpdateCategory(DeleteCategoryCommand request) => Ok(await _mediator.Send(request));
+    }
     public class DeleteCategoryCommand : IRequest<DeleteCategoryCommandResponse>
     {
         public Guid Id { get; set; }
@@ -17,16 +24,16 @@ namespace eShop.ProductApi.Application.Commands
 
     public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, DeleteCategoryCommandResponse>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ProductDbContext _productDbContext;
 
-        public DeleteCategoryCommandHandler(ICategoryRepository categoryRepository)
+        public DeleteCategoryCommandHandler(ProductDbContext productDbContext)
         {
-            _categoryRepository = categoryRepository;
+            _productDbContext = productDbContext;
         }
 
         public async Task<DeleteCategoryCommandResponse> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryFromDb = await _categoryRepository.GetCategoryById(request.Id);
+            var categoryFromDb = await _productDbContext.Category.AsNoTracking().FirstOrDefaultAsync(c => c.Id == request.Id);
             if (categoryFromDb == null)
                 return new DeleteCategoryCommandResponse()
                 {
@@ -37,13 +44,14 @@ namespace eShop.ProductApi.Application.Commands
                     }
                 };
 
-            await _categoryRepository.DeleteCategory(categoryFromDb);
-            await _categoryRepository.SaveChanges();
+            _productDbContext.Remove(categoryFromDb);
+            await _productDbContext.SaveChangesAsync();
 
             return new DeleteCategoryCommandResponse()
             {
                 Success = true
             };
         }
+
     }
 }

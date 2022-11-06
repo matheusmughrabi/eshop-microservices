@@ -1,10 +1,18 @@
-﻿using eShop.ProductApi.DataAccess.Repositories;
+﻿using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace eShop.ProductApi.Application.Commands
+namespace eShop.ProductApi.Features.Category
 {
+    public partial class CategoryController
+    {
+        [HttpPost("category/Create")]
+        public async Task<IActionResult> CreateCategory(CreateCategoryCommand request) => Ok(await _mediator.Send(request));
+    }
+
     public class CreateCategoryCommand : IRequest<CreateCategoryCommandResponse>
     {
         public string Name { get; set; }
@@ -20,16 +28,16 @@ namespace eShop.ProductApi.Application.Commands
 
     public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CreateCategoryCommandResponse>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ProductDbContext _productDbContext;
 
-        public CreateCategoryCommandHandler(ICategoryRepository categoryRepository)
+        public CreateCategoryCommandHandler(ProductDbContext productDbContext)
         {
-            _categoryRepository = categoryRepository;
+            _productDbContext = productDbContext;
         }
 
         public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryExists = await _categoryRepository.CategoryExists(request.Name);
+            var categoryExists = await CategoryExists(request.Name);
             if (categoryExists)
                 return new CreateCategoryCommandResponse()
                 {
@@ -44,8 +52,9 @@ namespace eShop.ProductApi.Application.Commands
                     }
                 };
 
-            var createdCategory = await _categoryRepository.CreateCategory(new CategoryEntity(request.Name, request.Description));
-            await _categoryRepository.SaveChanges();
+            var categoryEntity = new CategoryEntity(request.Name, request.Description);
+            await _productDbContext.Category.AddAsync(categoryEntity);
+            await _productDbContext.SaveChangesAsync();
 
             return new CreateCategoryCommandResponse()
             {
@@ -54,11 +63,19 @@ namespace eShop.ProductApi.Application.Commands
                     {
                         new Notification()
                         {
-                            Message = $"Category {createdCategory.Name} created successfuly",
+                            Message = $"Category {categoryEntity.Name} created successfuly",
                             Type = ENotificationType.Informative
                         }
-                    }
+                    },
+                CategoryId = categoryEntity.Id
             };
+        }
+
+        private async Task<bool> CategoryExists(string name)
+        {
+            return await _productDbContext.Category
+                .AsNoTracking()
+                .AnyAsync(c => c.Name == name);
         }
     }
 }
