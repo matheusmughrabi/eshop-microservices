@@ -9,8 +9,8 @@ namespace eShop.ProductApi.Features.Category
 {
     public partial class CategoryController
     {
-        [HttpPost("category/Create")]
-        public async Task<IActionResult> CreateCategory(CreateCategoryCommand request) => Ok(await _mediator.Send(request));
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create(CreateCategoryCommand request) => Ok(await _mediator.Send(request));
     }
 
     public class CreateCategoryCommand : IRequest<CreateCategoryCommandResponse>

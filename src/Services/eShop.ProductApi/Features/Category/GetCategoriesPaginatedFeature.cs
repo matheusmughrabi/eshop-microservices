@@ -8,7 +8,7 @@ namespace eShop.ProductApi.Features.Category
     public partial class CategoryController
     {
         [HttpGet("GetPaginated")]
-        public async Task<IActionResult> GetCategoriesPaginated([FromQuery] GetCategoriesPaginatedQuery request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> GetPaginated([FromQuery] GetCategoriesPaginatedQuery request) => Ok(await _mediator.Send(request));
     }
 
     public class GetCategoriesPaginatedQuery : IRequest<GetCategoriesPaginatedQueryResponse>

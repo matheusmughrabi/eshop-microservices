@@ -9,7 +9,7 @@ namespace eShop.ProductApi.Features.Category
     public partial class CategoryController
     {
         [HttpPut("Update")]
-        public async Task<IActionResult> UpdateCategory(UpdateCategoryCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> Update(UpdateCategoryCommand request) => Ok(await _mediator.Send(request));
     }
 
     public class UpdateCategoryCommand : IRequest<UpdateCategoryCommandResponse>
