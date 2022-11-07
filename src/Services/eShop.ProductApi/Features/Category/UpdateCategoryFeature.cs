@@ -1,4 +1,5 @@
 ﻿using eShop.ProductApi.DataAccess;
+using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,16 @@ namespace eShop.ProductApi.Features.Category
 
     public class UpdateCategoryCommand : IRequest<UpdateCategoryCommandResponse>
     {
+        public UpdateCategoryCommand(Guid id, string name, string? description)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+        }
+
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 
     public class UpdateCategoryCommandResponse
@@ -36,6 +44,17 @@ namespace eShop.ProductApi.Features.Category
 
         public async Task<UpdateCategoryCommandResponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
+            var _dataValidations = new List<Notification>();
+            _dataValidations.ValidateIfNullOrEmptyName(request.Name);
+            _dataValidations.ValidateIfNameIsTooLong(request.Name);
+
+            if (_dataValidations.Count > 0)
+                return new UpdateCategoryCommandResponse()
+                {
+                    Success = false,
+                    Notifications = _dataValidations
+                };
+
             var categoryFromDb = await _productDbContext.Category.FirstOrDefaultAsync(c => c.Id == request.Id);
             if (categoryFromDb == null)
                 return new UpdateCategoryCommandResponse()
@@ -47,8 +66,7 @@ namespace eShop.ProductApi.Features.Category
                     }
                 };
 
-            categoryFromDb.Name = request.Name;
-            categoryFromDb.Description = request.Description;
+            categoryFromDb.Update(request.Name, request.Description);
 
             await _productDbContext.SaveChangesAsync();
 

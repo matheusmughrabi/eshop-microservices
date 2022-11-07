@@ -1,4 +1,5 @@
 ﻿using eShop.ProductApi.DataAccess;
+using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
 using MediatR;
@@ -14,9 +15,17 @@ namespace eShop.ProductApi.Features.Product
     }
     public class CreateProductCommand : IRequest<CreateProductCommandResponse>
     {
+        public CreateProductCommand(Guid categoryId, string name, string? description, decimal price)
+        {
+            CategoryId = categoryId;
+            Name = name;
+            Description = description;
+            Price = price;
+        }
+
         public Guid CategoryId { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public decimal Price { get; set; }
     }
 
@@ -38,6 +47,17 @@ namespace eShop.ProductApi.Features.Product
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
+            var _dataValidations = new List<Notification>();
+            _dataValidations.ValidateIfNullName(request.Name);
+            _dataValidations.ValidateIfPriceEqualOrLowerThanZero(request.Price);
+
+            if (_dataValidations.Count > 0)
+                return new CreateProductCommandResponse()
+                {
+                    Success = false,
+                    Notifications = _dataValidations
+                };
+
             var categoryFromDb = await _productDbContext.Category.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == request.CategoryId);
             if (categoryFromDb == null)
                 return new CreateProductCommandResponse()

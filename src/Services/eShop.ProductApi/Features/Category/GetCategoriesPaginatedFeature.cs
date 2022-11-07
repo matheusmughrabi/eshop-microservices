@@ -48,6 +48,7 @@ namespace eShop.ProductApi.Features.Category
                 .AsNoTracking()
                 .Skip(skip)
                 .Take(request.ItemsPerPage)
+                .OrderBy(c => c.Name)
                 .Select(c => new GetCategoriesPaginatedQueryResponse.Category()
                 {
                     Name = c.Name,

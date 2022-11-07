@@ -1,4 +1,5 @@
 ﻿using eShop.ProductApi.DataAccess;
+using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
 using MediatR;
@@ -15,6 +16,12 @@ namespace eShop.ProductApi.Features.Category
 
     public class CreateCategoryCommand : IRequest<CreateCategoryCommandResponse>
     {
+        public CreateCategoryCommand(string name, string? description)
+        {
+            Name = name;
+            Description = description;
+        }
+
         public string Name { get; set; }
         public string? Description { get; set; }
     }
@@ -37,6 +44,17 @@ namespace eShop.ProductApi.Features.Category
 
         public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
+            var _dataValidations = new List<Notification>();
+            _dataValidations.ValidateIfNullOrEmptyName(request.Name);
+            _dataValidations.ValidateIfNameIsTooLong(request.Name);
+
+            if (_dataValidations.Count > 0)
+                return new CreateCategoryCommandResponse()
+                {
+                    Success = false,
+                    Notifications = _dataValidations
+                };
+
             var categoryExists = await CategoryExists(request.Name);
             if (categoryExists)
                 return new CreateCategoryCommandResponse()
@@ -63,7 +81,7 @@ namespace eShop.ProductApi.Features.Category
                     {
                         new Notification()
                         {
-                            Message = $"Category {categoryEntity.Name} created successfuly",
+                            Message = $"Category '{categoryEntity.Name}' created successfuly",
                             Type = ENotificationType.Informative
                         }
                     },

@@ -1,4 +1,5 @@
 ﻿using eShop.ProductApi.DataAccess;
+using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,14 @@ namespace eShop.ProductApi.Features.Product
 
     public class UpdateProductCommand : IRequest<UpdateProductCommandResponse>
     {
+        public UpdateProductCommand(Guid productId, string name, string? description, decimal price)
+        {
+            ProductId = productId;
+            Name = name;
+            Description = description;
+            Price = price;
+        }
+
         public Guid ProductId { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
@@ -37,6 +46,17 @@ namespace eShop.ProductApi.Features.Product
 
         public async Task<UpdateProductCommandResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
+            var _dataValidations = new List<Notification>();
+            _dataValidations.ValidateIfNullName(request.Name);
+            _dataValidations.ValidateIfPriceEqualOrLowerThanZero(request.Price);
+
+            if (_dataValidations.Count > 0)
+                return new UpdateProductCommandResponse()
+                {
+                    Success = false,
+                    Notifications = _dataValidations
+                };
+
             var productFromDb = await _productDbContext.Product.FirstOrDefaultAsync(Product => Product.Id == request.ProductId);
             if (productFromDb is null)
                 return new UpdateProductCommandResponse()
@@ -52,9 +72,7 @@ namespace eShop.ProductApi.Features.Product
                     }
                 };
 
-            productFromDb.Name = request.Name;
-            productFromDb.Description = request.Description;
-            productFromDb.Price = request.Price;
+            productFromDb.Update(request.Name, request.Price, request.Description);
 
             await _productDbContext.SaveChangesAsync();
 

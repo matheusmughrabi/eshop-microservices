@@ -8,7 +8,7 @@ namespace eShop.ProductApi.Features.Category
 {
     public partial class CategoryController
     {
-        [HttpPut("Delete")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(DeleteCategoryCommand request) => Ok(await _mediator.Send(request));
     }
     public class DeleteCategoryCommand : IRequest<DeleteCategoryCommandResponse>
@@ -33,7 +33,10 @@ namespace eShop.ProductApi.Features.Category
 
         public async Task<DeleteCategoryCommandResponse> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryFromDb = await _productDbContext.Category.AsNoTracking().FirstOrDefaultAsync(c => c.Id == request.Id);
+            var categoryFromDb = await _productDbContext.Category
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == request.Id);
+
             if (categoryFromDb == null)
                 return new DeleteCategoryCommandResponse()
                 {

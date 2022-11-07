@@ -1,4 +1,4 @@
-﻿using eShop.ProductApi.Exceptions;
+﻿using eShop.ProductApi.Domain.Validations;
 
 namespace eShop.ProductApi.Entity
 {
@@ -6,23 +6,30 @@ namespace eShop.ProductApi.Entity
     {
         protected ProductEntity() { }
 
-        public ProductEntity(string name, decimal price, string description = null)
+        public ProductEntity(string name, decimal price, string? description = null)
         {
-            if (name is null)
-                throw new InvalidPropertyValueException("name cannot be null.");
-
-            if (price <= 0)
-                throw new InvalidPropertyValueException("price must be greater than zero.");
+            ProductValidations.ValidateIfNullName(name);
+            ProductValidations.ValidateIfPriceEqualOrLowerThanZero(price);
 
             Name = name;
             Description = description;
             Price = price;
         }
 
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public decimal Price { get; set; }
+        public string Name { get; private set; }
+        public string? Description { get; private set; }
+        public decimal Price { get; private set; }
         public CategoryEntity Category { get; set; }
+
+        public void Update(string name, decimal price, string? description = null)
+        {
+            ProductValidations.ValidateIfNullName(name);
+            ProductValidations.ValidateIfPriceEqualOrLowerThanZero(price);
+
+            Name = name;
+            Description = description;
+            Price = price;
+        }
 
         public override bool Equals(object? obj)
         {
