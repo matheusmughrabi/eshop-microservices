@@ -9,7 +9,7 @@ namespace eShop.ProductApi.Features.Product
     public partial class ProductController
     {
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(DeleteProductCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> Delete([FromBody] DeleteProductCommand request) => Ok(await _mediator.Send(request));
     }
 
     public class DeleteProductCommand : IRequest<DeleteProductCommandResponse>

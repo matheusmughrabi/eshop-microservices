@@ -10,7 +10,7 @@ namespace eShop.ProductApi.Features.Product
     public partial class ProductController
     {
         [HttpPut("Update")]
-        public async Task<IActionResult> Update(CreateProductCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> Update([FromBody] CreateProductCommand request) => Ok(await _mediator.Send(request));
     }
 
     public class UpdateProductCommand : IRequest<UpdateProductCommandResponse>

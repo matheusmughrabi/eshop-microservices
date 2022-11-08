@@ -9,7 +9,7 @@ namespace eShop.ProductApi.Features.Category
     public partial class CategoryController
     {
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(DeleteCategoryCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> Delete([FromBody] DeleteCategoryCommand request) => Ok(await _mediator.Send(request));
     }
     public class DeleteCategoryCommand : IRequest<DeleteCategoryCommandResponse>
     {
