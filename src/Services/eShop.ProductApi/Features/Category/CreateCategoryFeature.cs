@@ -1,7 +1,7 @@
 ﻿using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +26,19 @@ namespace eShop.ProductApi.Features.Category
         public string? Description { get; set; }
     }
 
+    public class CreateCategoryValidator : AbstractValidator<CreateCategoryCommand>
+    {
+        public CreateCategoryValidator()
+        {
+            RuleFor(c => c.Name)
+                .NotNull()
+                .WithMessage("'Name' cannot be null or empty.")
+                .Length(1, 100)
+                .WithMessage("'Name' length is limited to 100 characters.")
+                .WithSeverity(Severity.Warning);
+        }
+    }
+
     public class CreateCategoryCommandResponse
     {
         public bool Success { get; set; }
@@ -44,15 +57,14 @@ namespace eShop.ProductApi.Features.Category
 
         public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var _dataValidations = new List<Notification>();
-            _dataValidations.ValidateIfNullOrEmptyName(request.Name);
-            _dataValidations.ValidateIfNameIsTooLong(request.Name);
+            var requestValidator = new CreateCategoryValidator();
+            var validationResults = requestValidator.Validate(request);
 
-            if (_dataValidations.Count > 0)
+            if (!validationResults.IsValid)
                 return new CreateCategoryCommandResponse()
                 {
                     Success = false,
-                    Notifications = _dataValidations
+                    Notifications = validationResults.ToNotifications()
                 };
 
             var categoryExists = await CategoryExists(request.Name);

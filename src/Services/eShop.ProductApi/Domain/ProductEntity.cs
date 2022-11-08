@@ -1,4 +1,4 @@
-﻿using eShop.ProductApi.Domain.Validations;
+﻿using eShop.ProductApi.Exceptions;
 
 namespace eShop.ProductApi.Entity
 {
@@ -8,8 +8,8 @@ namespace eShop.ProductApi.Entity
 
         public ProductEntity(string name, decimal price, string? description = null)
         {
-            ProductValidations.ValidateIfNullName(name);
-            ProductValidations.ValidateIfPriceEqualOrLowerThanZero(price);
+            GuardAgainstNullName(name);
+            GuardAgainstPriceEqualOrLowerThanZero(price);
 
             Name = name;
             Description = description;
@@ -23,12 +23,24 @@ namespace eShop.ProductApi.Entity
 
         public void Update(string name, decimal price, string? description = null)
         {
-            ProductValidations.ValidateIfNullName(name);
-            ProductValidations.ValidateIfPriceEqualOrLowerThanZero(price);
+            GuardAgainstNullName(name);
+            GuardAgainstPriceEqualOrLowerThanZero(price);
 
             Name = name;
             Description = description;
             Price = price;
+        }
+
+        private void GuardAgainstNullName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new InvalidPropertyValueException("Name cannot be null or empty.");
+        }
+
+        private void GuardAgainstPriceEqualOrLowerThanZero(decimal price)
+        {
+            if (price <= 0)
+                throw new InvalidPropertyValueException("Price must be greater than zero.");
         }
 
         public override bool Equals(object? obj)

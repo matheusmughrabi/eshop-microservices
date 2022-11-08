@@ -1,7 +1,7 @@
 ﻿using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,29 @@ namespace eShop.ProductApi.Features.Product
         public decimal Price { get; set; }
     }
 
+    public class CreateProductValidator : AbstractValidator<CreateProductCommand>
+    {
+        public CreateProductValidator()
+        {
+            RuleFor(c => c.CategoryId)
+                .NotEmpty()
+                .WithMessage("'CategoryId' cannot be null or empty")
+                .WithSeverity(Severity.Warning);
+
+            RuleFor(c => c.Name)
+                .NotNull()
+                .WithMessage("'Name' cannot be null or empty.")
+                .Length(1, 100)
+                .WithMessage("'Name' length is limited to 100 characters.")
+                .WithSeverity(Severity.Warning);
+
+            RuleFor(c => c.Price)
+                .GreaterThan(0)
+                .WithMessage("'Price' must be greater than zero.")
+                .WithSeverity(Severity.Warning);
+        }
+    }
+
     public class CreateProductCommandResponse
     {
         public bool Success { get; set; }
@@ -47,15 +70,14 @@ namespace eShop.ProductApi.Features.Product
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var _dataValidations = new List<Notification>();
-            _dataValidations.ValidateIfNullName(request.Name);
-            _dataValidations.ValidateIfPriceEqualOrLowerThanZero(request.Price);
+            var requestValidator = new CreateProductValidator();
+            var validationResults = requestValidator.Validate(request);
 
-            if (_dataValidations.Count > 0)
+            if (!validationResults.IsValid)
                 return new CreateProductCommandResponse()
                 {
                     Success = false,
-                    Notifications = _dataValidations
+                    Notifications = validationResults.ToNotifications()
                 };
 
             var categoryFromDb = await _productDbContext.Category.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == request.CategoryId);

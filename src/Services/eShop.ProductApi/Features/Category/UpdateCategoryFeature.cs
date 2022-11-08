@@ -1,6 +1,6 @@
 ﻿using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Notifications;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +27,24 @@ namespace eShop.ProductApi.Features.Category
         public string? Description { get; set; }
     }
 
+    public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryCommand>
+    {
+        public UpdateCategoryValidator()
+        {
+            RuleFor(c => c.Id)
+                .NotEmpty()
+                .WithMessage("'Id' cannot be null or empty")
+                .WithSeverity(Severity.Warning); ;
+
+            RuleFor(c => c.Name)
+                .NotNull()
+                .WithMessage("'Name' cannot be null or empty.")
+                .Length(1, 100)
+                .WithMessage("'Name' length is limited to 100 characters.")
+                .WithSeverity(Severity.Warning);
+        }
+    }
+
     public class UpdateCategoryCommandResponse
     {
         public bool Success { get; set; }
@@ -44,15 +62,14 @@ namespace eShop.ProductApi.Features.Category
 
         public async Task<UpdateCategoryCommandResponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var _dataValidations = new List<Notification>();
-            _dataValidations.ValidateIfNullOrEmptyName(request.Name);
-            _dataValidations.ValidateIfNameIsTooLong(request.Name);
+            var requestValidator = new UpdateCategoryValidator();
+            var validationResults = requestValidator.Validate(request);
 
-            if (_dataValidations.Count > 0)
+            if (!validationResults.IsValid)
                 return new UpdateCategoryCommandResponse()
                 {
                     Success = false,
-                    Notifications = _dataValidations
+                    Notifications = validationResults.ToNotifications()
                 };
 
             var categoryFromDb = await _productDbContext.Category.FirstOrDefaultAsync(c => c.Id == request.Id);

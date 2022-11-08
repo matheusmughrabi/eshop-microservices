@@ -1,6 +1,6 @@
 ﻿using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.Domain.Validations;
 using eShop.ProductApi.Notifications;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,29 @@ namespace eShop.ProductApi.Features.Product
         public decimal Price { get; set; }
     }
 
+    public class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
+    {
+        public UpdateProductValidator()
+        {
+            RuleFor(c => c.ProductId)
+                .NotEmpty()
+                .WithMessage("'ProductId' cannot be null or empty")
+                .WithSeverity(Severity.Warning);
+
+            RuleFor(c => c.Name)
+                .NotNull()
+                .WithMessage("'Name' cannot be null or empty.")
+                .Length(1, 100)
+                .WithMessage("'Name' length is limited to 100 characters.")
+                .WithSeverity(Severity.Warning);
+
+            RuleFor(c => c.Price)
+                .GreaterThan(0)
+                .WithMessage("'Price' must be greater than zero.")
+                .WithSeverity(Severity.Warning);
+        }
+    }
+
     public class UpdateProductCommandResponse
     {
         public bool Success { get; set; }
@@ -46,15 +69,14 @@ namespace eShop.ProductApi.Features.Product
 
         public async Task<UpdateProductCommandResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var _dataValidations = new List<Notification>();
-            _dataValidations.ValidateIfNullName(request.Name);
-            _dataValidations.ValidateIfPriceEqualOrLowerThanZero(request.Price);
+            var requestValidator = new UpdateProductValidator();
+            var validationResults = requestValidator.Validate(request);
 
-            if (_dataValidations.Count > 0)
+            if (!validationResults.IsValid)
                 return new UpdateProductCommandResponse()
                 {
                     Success = false,
-                    Notifications = _dataValidations
+                    Notifications = validationResults.ToNotifications()
                 };
 
             var productFromDb = await _productDbContext.Product.FirstOrDefaultAsync(Product => Product.Id == request.ProductId);

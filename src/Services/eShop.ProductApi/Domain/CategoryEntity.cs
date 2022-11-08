@@ -1,4 +1,4 @@
-﻿using eShop.ProductApi.Domain.Validations;
+﻿using eShop.ProductApi.Exceptions;
 
 namespace eShop.ProductApi.Entity
 {
@@ -10,8 +10,8 @@ namespace eShop.ProductApi.Entity
 
         public CategoryEntity(string name, string? description = null)
         {
-            CategoryValidations.ValidateIfNullOrEmptyName(name);
-            CategoryValidations.ValidateIfNameIsTooLong(name);
+            ValidateIfNullOrEmptyName(name);
+            ValidateIfNameIsTooLong(name);
 
             Name = name;
             Description = description;
@@ -23,11 +23,23 @@ namespace eShop.ProductApi.Entity
 
         public void Update(string name, string? description = null)
         {
-            CategoryValidations.ValidateIfNullOrEmptyName(name);
-            CategoryValidations.ValidateIfNameIsTooLong(name);
+            ValidateIfNullOrEmptyName(name);
+            ValidateIfNameIsTooLong(name);
 
             Name = name;
             Description = description;
+        }
+
+        private void ValidateIfNullOrEmptyName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new InvalidPropertyValueException("'Name' cannot be null or empty.");
+        }
+
+        private void ValidateIfNameIsTooLong(string name)
+        {
+            if (name.Length > 100)
+                throw new InvalidPropertyValueException("'Name' length is limited to 100 characters.");
         }
     }
 }
