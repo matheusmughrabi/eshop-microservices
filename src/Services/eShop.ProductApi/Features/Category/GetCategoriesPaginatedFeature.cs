@@ -25,6 +25,7 @@ namespace eShop.ProductApi.Features.Category
 
         public class Category
         {
+            public Guid Id { get; set; }
             public string Name { get; set; }
             public string? Description { get; set; }
             public int TotalProducts { get; set; }
@@ -51,6 +52,7 @@ namespace eShop.ProductApi.Features.Category
                 .OrderBy(c => c.Name)
                 .Select(c => new GetCategoriesPaginatedQueryResponse.Category()
                 {
+                    Id = c.Id,
                     Name = c.Name,
                     Description = c.Description,
                     TotalProducts = c.Products.Count()
