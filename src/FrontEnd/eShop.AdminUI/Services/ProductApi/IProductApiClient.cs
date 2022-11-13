@@ -7,5 +7,6 @@ namespace eShop.AdminUI.Services.ProductApi
         Task<ProductApiClient.GetCategoriesPaginatedResponse> GetCategoriesPaginated(int page, int itemsPerPage);
         Task<ProductApiClient.GetCategoryByIdResponse> GetCategoryById(Guid id);
         Task<ProductApiClient.UpdateCategoryResponse> UpdateCategory(ProductApiClient.UpdateCategoryRequest request);
+        Task<ProductApiClient.CreateProductResponse> CreateProduct(ProductApiClient.CreateProductRequest request);
     }
 }

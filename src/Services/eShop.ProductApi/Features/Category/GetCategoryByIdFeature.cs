@@ -22,6 +22,15 @@ namespace eShop.ProductApi.Features.Category
         public string Name { get; set; }
         public string? Description { get; set; }
         public int TotalProducts { get; set; }
+        public List<Product> Products { get; set; }
+
+        public class Product
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public decimal Price { get; set; }
+        }
     }
 
     public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, GetCategoryByIdQueryResponse>
@@ -37,13 +46,21 @@ namespace eShop.ProductApi.Features.Category
         {
             return await _productDbContext.Category
                 .AsNoTracking()
+                .Include(i => i.Products)
                 .Where(c => c.Id == request.Id)
                 .Select(c => new GetCategoryByIdQueryResponse()
                 {
                     Id = c.Id,
                     Name = c.Name,
                     Description = c.Description,
-                    TotalProducts = c.Products.Count()
+                    TotalProducts = c.Products.Count(),
+                    Products = c.Products.Select(p => new GetCategoryByIdQueryResponse.Product()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Price = p.Price
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
         }

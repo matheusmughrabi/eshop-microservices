@@ -27,6 +27,15 @@ namespace eShop.AdminUI.Services.ProductApi
             public string Name { get; set; }
             public string? Description { get; set; }
             public int TotalProducts { get; set; }
+            public List<Product> Products { get; set; }
+
+            public class Product
+            {
+                public Guid Id { get; set; }
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public decimal Price { get; set; }
+            }
         }
     }
 }

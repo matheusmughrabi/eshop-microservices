@@ -1,9 +1,18 @@
 ﻿@page
-@model eShop.AdminUI.Pages.Products.IndexModel
+@model IndexModel
 @{
 }
 
-<h1>Products catalog</h1>
+@*<div class="d-flex justify-content-between">
+    <h1>Products catalog</h1>
+    <a class="btn btn-primary" asp-page="./Create">Create</a>
+    </div>*@
+
+<div>
+    <h1>Products catalog</h1>
+    <a class="btn btn-primary" asp-page="./Create">Create</a>
+</div>
+
 
 <table class="table">
     <thead>
@@ -24,7 +33,10 @@
                 <td scope="row">@category.Name</td>
                 <td scope="row">@category.Description</td>
                 <td scope="row">@category.TotalProducts</td>
-                <td scope="row"><button class="button bg-secondary">Edit</button></td>
+                <td scope="row">
+                    <a class="btn btn-primary" asp-page="./Details" asp-route-categoryId="@category.Id">Details</a>
+                    <a class="btn btn-secondary" asp-page="./Edit" asp-route-id="@category.Id">Edit</a>
+                </td>
             </tr>
         }
 

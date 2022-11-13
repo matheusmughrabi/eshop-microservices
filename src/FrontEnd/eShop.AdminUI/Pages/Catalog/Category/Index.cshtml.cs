@@ -2,7 +2,7 @@ using eShop.AdminUI.Services.ProductApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace eShop.AdminUI.Pages.Products
+namespace eShop.AdminUI.Pages.Catalog.Category
 {
     public class IndexModel : PageModel
     {
@@ -16,7 +16,7 @@ namespace eShop.AdminUI.Pages.Products
         [BindProperty]
         public CategoriesViewModel CategoriesViewModel { get; set; } = new CategoriesViewModel();
 
-        public async Task OnGet()
+        public async Task OnGetAsync()
         {
             var response = await _productApiClient.GetCategoriesPaginated(1, 10);
 

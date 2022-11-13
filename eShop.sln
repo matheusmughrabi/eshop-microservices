@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.ProductApi", "src\Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.WebUI", "src\FrontEnd\eShop.WebUI\eShop.WebUI.csproj", "{49D2754C-2732-43ED-A72F-D84152E3E64C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShop.AdminUI", "src\FrontEnd\eShop.AdminUI\eShop.AdminUI.csproj", "{351E3493-B932-4E02-9CDA-9EB99DA63457}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShop.AdminUI", "src\FrontEnd\eShop.AdminUI\eShop.AdminUI.csproj", "{351E3493-B932-4E02-9CDA-9EB99DA63457}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

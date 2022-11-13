@@ -2,7 +2,7 @@ using eShop.AdminUI.Services.ProductApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace eShop.AdminUI.Pages.Products
+namespace eShop.AdminUI.Pages.Catalog.Category
 {
     public class EditModel : PageModel
     {
@@ -33,7 +33,7 @@ namespace eShop.AdminUI.Pages.Products
             if (!response.Success)
                 return new JsonResult(response);
 
-            return RedirectToAction("./Index");
+            return RedirectToPage("./Index");
         }
     }
 

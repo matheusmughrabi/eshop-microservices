@@ -6,7 +6,7 @@ namespace eShop.AdminUI.Services.ProductApi
 {
     public partial class ProductApiClient
     {
-        public async Task<CreateCategoryResponse> CreateCategory(CreateCategoryRequest request)
+        public async Task<CreateProductResponse> CreateProduct(CreateProductRequest request)
         {
             var httpClient = _httpClientFactory.CreateClient("ProductApi");
 
@@ -15,7 +15,7 @@ namespace eShop.AdminUI.Services.ProductApi
                 Encoding.UTF8,
                 Application.Json);
 
-            var httpResponseMessage = await httpClient.PostAsync("api/Category/Create", content);
+            var httpResponseMessage = await httpClient.PostAsync("api/Product/Create", content);
             httpResponseMessage.EnsureSuccessStatusCode();
 
             var response = await httpResponseMessage.Content.ReadAsStringAsync();
@@ -25,33 +25,22 @@ namespace eShop.AdminUI.Services.ProductApi
                 PropertyNameCaseInsensitive = true
             };
 
-            return JsonSerializer.Deserialize<CreateCategoryResponse>(response, options);
+            return JsonSerializer.Deserialize<CreateProductResponse>(response, options);
         }
 
-        public class CreateCategoryRequest
+        public class CreateProductRequest
         {
+            public Guid CategoryId { get; set; }
             public string Name { get; set; }
             public string? Description { get; set; }
+            public decimal Price { get; set; }
         }
 
-        public class CreateCategoryResponse
+        public class CreateProductResponse
         {
             public bool Success { get; set; }
-            public Guid? CategoryId { get; set; }
+            public Guid? ProductId { get; set; }
             public List<Notification> Notifications { get; set; }
-        }
-
-        public class Notification
-        {
-            public string Message { get; set; }
-            public ENotificationType Type { get; set; }
-        }
-
-        public enum ENotificationType
-        {
-            Informative = 1,
-            Warning = 2,
-            Error = 3,
         }
     }
 }
