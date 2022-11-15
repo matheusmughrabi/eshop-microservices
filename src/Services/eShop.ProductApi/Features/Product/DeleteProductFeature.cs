@@ -50,7 +50,11 @@ namespace eShop.ProductApi.Features.Product
 
             return new DeleteProductCommandResponse()
             {
-                Success = true
+                Success = true,
+                Notifications = new List<Notification>()
+                {
+                    new Notification() { Message = $"Product {productFromDb.Name} deleted.", Type = ENotificationType.Informative }
+                }
             };
         }
     }

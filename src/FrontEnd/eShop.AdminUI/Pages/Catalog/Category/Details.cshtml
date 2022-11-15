@@ -1,28 +1,36 @@
 ﻿@page
+@using System.Globalization
 @model eShop.AdminUI.Pages.Catalog.Category.DetailsModel
 @{
 }
-<div class="card">
-    <div class="card-header">
-        <h5>@Model.CategoryDetailsViewModel.Name category</h5>
-        <a class="btn btn-primary" asp-page="/Catalog/Product/Create" asp-route-categoryId="@Model.CategoryDetailsViewModel.Id">New product</a>
-    </div>
 
+@Html.AntiForgeryToken()
 
+<div class="card shadow">
     <div class="card-body">
+
+        <div class="d-flex justify-content-between">
+            <h4 class="card-title">@Model.CategoryDetailsViewModel.Name category</h4>
+            <a class="btn btn-primary mb-3" asp-page="/Catalog/Product/Create" asp-route-categoryId="@Model.CategoryDetailsViewModel.Id">New product</a>
+        </div>
+
+
 
         @if (Model.CategoryDetailsViewModel.Products.Count > 0)
         {
             <div class="list-group">
                 @foreach (var product in Model.CategoryDetailsViewModel.Products)
                 {
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">@product.Name</h5>
-                            <small>@product.Price</small>
-                        </div>
-                        <p class="mb-1">@product.Description</p>
-                    </a>
+                    <div id="product-div-@product.Id" class="list-group-item list-group-item-action">
+                        <a class="text-decoration-none text-dark" asp-page="/Catalog/Product/Update" asp-route-id="@product.Id">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">@product.Name</h5>
+                                <h6>@product.Price.ToString("C", CultureInfo.CurrentCulture)</h6>
+                            </div>
+                            <p class="mb-1">@product.Description</p>
+                        </a>
+                        <button class="btn btn-danger delete-product-button" id="delete-product-button-@product.Id" value="@product.Id">Delete</button>
+                    </div>
                 }
             </div>
         }
@@ -36,3 +44,36 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+<script>
+    $(".delete-product-button").click(function(){
+
+        let productToDeleteId = $(this).attr("value");
+        const categoryId = '@Model.CategoryDetailsViewModel.Id';
+
+        $.ajax({
+           url: '/Catalog/Product/Delete?handler=DeleteProduct',
+           type: 'POST',
+           contentType: 'application/json',
+           headers: {
+              RequestVerificationToken:
+                  $('input:hidden[name="__RequestVerificationToken"]').val()
+           },
+           data: JSON.stringify({Id : productToDeleteId, CategoryId : categoryId}),
+           success: function( data, textStatus, jQxhr ){
+                alert(data.notifications[0].message);
+                removeProductListItem(productToDeleteId);
+            },
+           error: function( jqXhr, textStatus, errorThrown ){
+                alert("error when trying to delete product");
+            }
+        });
+    });
+
+    function removeProductListItem(productToDeleteId){
+        $(`#product-div-${productToDeleteId}`).remove()
+    }
+
+</script>
+}

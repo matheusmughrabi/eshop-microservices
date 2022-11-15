@@ -10,20 +10,20 @@ namespace eShop.ProductApi.Features.Product
     public partial class ProductController
     {
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromBody] CreateProductCommand request) => Ok(await _mediator.Send(request));
+        public async Task<IActionResult> Update([FromBody] UpdateProductCommand request) => Ok(await _mediator.Send(request));
     }
 
     public class UpdateProductCommand : IRequest<UpdateProductCommandResponse>
     {
-        public UpdateProductCommand(Guid productId, string name, string? description, decimal price)
+        public UpdateProductCommand(Guid id, string name, string? description, decimal price)
         {
-            ProductId = productId;
+            Id = id;
             Name = name;
             Description = description;
             Price = price;
         }
 
-        public Guid ProductId { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
@@ -33,9 +33,9 @@ namespace eShop.ProductApi.Features.Product
     {
         public UpdateProductValidator()
         {
-            RuleFor(c => c.ProductId)
+            RuleFor(c => c.Id)
                 .NotEmpty()
-                .WithMessage("'ProductId' cannot be null or empty")
+                .WithMessage("'Id' cannot be null or empty")
                 .WithSeverity(Severity.Warning);
 
             RuleFor(c => c.Name)
@@ -79,7 +79,7 @@ namespace eShop.ProductApi.Features.Product
                     Notifications = validationResults.ToNotifications()
                 };
 
-            var productFromDb = await _productDbContext.Product.FirstOrDefaultAsync(Product => Product.Id == request.ProductId);
+            var productFromDb = await _productDbContext.Product.FirstOrDefaultAsync(Product => Product.Id == request.Id);
             if (productFromDb is null)
                 return new UpdateProductCommandResponse()
                 {

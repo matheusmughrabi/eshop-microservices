@@ -8,5 +8,8 @@ namespace eShop.AdminUI.Services.ProductApi
         Task<ProductApiClient.GetCategoryByIdResponse> GetCategoryById(Guid id);
         Task<ProductApiClient.UpdateCategoryResponse> UpdateCategory(ProductApiClient.UpdateCategoryRequest request);
         Task<ProductApiClient.CreateProductResponse> CreateProduct(ProductApiClient.CreateProductRequest request);
+        Task<ProductApiClient.UpdateProductResponse> UpdateProduct(ProductApiClient.UpdateProductRequest request);
+        Task<ProductApiClient.GetProductByIdResponse> GetProductById(Guid id);
+        Task<ProductApiClient.DeleteProductResponse> DeleteProduct(ProductApiClient.DeleteProductRequest request);
     }
 }
