@@ -1,3 +1,4 @@
+using eShop.AdminUI.Services.Generic;
 using eShop.AdminUI.Services.ProductApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddHttpClient("ProductApi", httpClient =>
 });
 
 builder.Services.AddScoped<IProductApiClient, ProductApiClient>();
+builder.Services.AddScoped<IGenericApiClient, GenericApiClient>();
 
 var app = builder.Build();
 
