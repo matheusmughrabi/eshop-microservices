@@ -1,18 +1,10 @@
-using eShop.AdminUI.Services.Generic;
-using eShop.AdminUI.Services.ProductApi;
+using eShop.AdminUI.Container;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-
-builder.Services.AddHttpClient("ProductApi", httpClient =>
-{
-    httpClient.BaseAddress = new Uri("https://localhost:7096/");
-});
-
-builder.Services.AddScoped<IProductApiClient, ProductApiClient>();
-builder.Services.AddScoped<IGenericApiClient, GenericApiClient>();
+builder.Services.AddCustomRouting();
+builder.Services.RegisterHttpClients(builder.Configuration);
 
 var app = builder.Build();
 
