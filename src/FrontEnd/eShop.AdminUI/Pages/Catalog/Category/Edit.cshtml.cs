@@ -18,7 +18,7 @@ namespace eShop.AdminUI.Pages.Catalog.Category
 
         public async Task<IActionResult> OnGetAsync(Guid id)
         {
-            var category = await _productApiClient.GetCategoryById(id);
+            var category = await _productApiClient.GetCategoryById(id, 1, 0);
             if (category == null)
                 return NotFound();
 

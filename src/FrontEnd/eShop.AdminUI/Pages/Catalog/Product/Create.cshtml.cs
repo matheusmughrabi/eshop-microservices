@@ -25,7 +25,7 @@ namespace eShop.AdminUI.Pages.Catalog.Product
         public async Task<IActionResult> OnPostAsync()
         {
             var response = await _productApiClient.CreateProduct(CreateProductViewModel.MapToCreateProductRequest());
-            return RedirectToPage();
+            return RedirectToPage(new { categoryId  = CreateProductViewModel.CategoryId });
         }
     }
 

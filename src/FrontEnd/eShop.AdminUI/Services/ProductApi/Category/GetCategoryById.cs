@@ -2,10 +2,11 @@
 {
     public partial class ProductApiClient
     {
-        public async Task<GetCategoryByIdResponse> GetCategoryById(Guid id) => await _genericApiClient.GetAsync<GetCategoryByIdResponse>(ApiKey, $"api/Category/GetById/{id}");
+        public async Task<GetCategoryByIdResponse> GetCategoryById(Guid id, int page, int itemsPerPage) => await _genericApiClient.GetAsync<GetCategoryByIdResponse>(ApiKey, $"api/Category/GetById/{id}?page={page}&itemsPerPage={itemsPerPage}");
 
         public class GetCategoryByIdResponse
         {
+            public int TotalItems { get; set; }
             public Guid Id { get; set; }
             public string Name { get; set; }
             public string? Description { get; set; }

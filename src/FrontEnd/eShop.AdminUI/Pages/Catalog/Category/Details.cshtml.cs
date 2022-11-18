@@ -1,6 +1,7 @@
 using eShop.AdminUI.Services.ProductApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using X.PagedList;
 
 namespace eShop.AdminUI.Pages.Catalog.Category
 {
@@ -15,14 +16,15 @@ namespace eShop.AdminUI.Pages.Catalog.Category
 
         public CategoryDetailsViewModel CategoryDetailsViewModel { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid categoryId)
+        public async Task<IActionResult> OnGetAsync(Guid categoryId, int selectedPage = 1)
         {
-            var response = await _productApiClient.GetCategoryById(categoryId);
+            var itemsPerPage = 5;
+            var response = await _productApiClient.GetCategoryById(categoryId, selectedPage, itemsPerPage);
 
             if(response == null)
                 return NotFound();
 
-            CategoryDetailsViewModel = response.MapToCategoryDetailsViewModel();
+            CategoryDetailsViewModel = response.MapToCategoryDetailsViewModel(selectedPage, itemsPerPage);
             return Page();
         }
     }
@@ -33,7 +35,7 @@ namespace eShop.AdminUI.Pages.Catalog.Category
         public string Name { get; set; }
         public string? Description { get; set; }
         public int TotalProducts { get; set; }
-        public List<Product> Products { get; set; }
+        public IPagedList<Product> Products { get; set; }
 
         public class Product
         {
@@ -46,22 +48,24 @@ namespace eShop.AdminUI.Pages.Catalog.Category
 
     public static class CategoryDetailsViewModelMaper
     {
-        public static CategoryDetailsViewModel MapToCategoryDetailsViewModel(this ProductApiClient.GetCategoryByIdResponse source)
+        public static CategoryDetailsViewModel MapToCategoryDetailsViewModel(this ProductApiClient.GetCategoryByIdResponse source, int selectedPage, int itemsPerPage)
         {
-            return new CategoryDetailsViewModel()
-            {
-                Id = source.Id,
-                Name = source.Name,
-                Description = source.Description,
-                TotalProducts = source.TotalProducts,
-                Products = source.Products
+            var productList = source.Products
                     .Select(p => new CategoryDetailsViewModel.Product()
                     {
                         Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
                         Price = p.Price
-                    }).ToList()
+                    }).ToList();
+
+            return new CategoryDetailsViewModel()
+            {
+                Id = source.Id,
+                Name = source.Name,
+                Description = source.Description,
+                TotalProducts = source.TotalProducts,
+                Products = new StaticPagedList<CategoryDetailsViewModel.Product>(productList, selectedPage, itemsPerPage, source.TotalItems)
             };
         }
     }

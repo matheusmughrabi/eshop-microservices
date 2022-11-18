@@ -1,5 +1,7 @@
 ﻿@page
 @using System.Globalization
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
 @model eShop.AdminUI.Pages.Catalog.Category.DetailsModel
 @{
 }
@@ -38,6 +40,23 @@
         {
             <p>There are no products in this category</p>
         }
+
+        <div class="d-flex flex-row-reverse bd-highlight">
+            @Html.PagedListPager(
+                Model.CategoryDetailsViewModel.Products,
+                selectedPage => Url.Action("Details", new { categoryId = @Model.CategoryDetailsViewModel.Id, selectedPage = selectedPage }),
+                new PagedListRenderOptions
+                {
+                LiElementClasses = new string[] { "page-item" },
+                PageClasses = new string[] { "page-link" },
+                LinkToFirstPageFormat = "First",
+                LinkToPreviousPageFormat = "Previous",
+                LinkToNextPageFormat = "Next",
+                LinkToLastPageFormat = "Last",
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always
+            })
+        </div>
 
         <div class="mt-3">
             <a asp-page="./Index" class="btn btn-primary">Return to list</a>
