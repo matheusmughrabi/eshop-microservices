@@ -1,6 +1,7 @@
 using eShop.AdminUI.Services.ProductApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using X.PagedList;
 
 namespace eShop.AdminUI.Pages.Catalog.Category
 {
@@ -16,24 +17,28 @@ namespace eShop.AdminUI.Pages.Catalog.Category
         [BindProperty]
         public CategoriesViewModel CategoriesViewModel { get; set; } = new CategoriesViewModel();
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int selectedPage = 1)
         {
-            var response = await _productApiClient.GetCategoriesPaginated(1, 10);
+            var itemsPerPage = 5;
+            var response = await _productApiClient.GetCategoriesPaginated(selectedPage, itemsPerPage);
 
-            CategoriesViewModel.Categories = response.Categories
-                .Select(c => new CategoriesViewModel.Category()
+            var categoriesList = response.Categories
+                .Select(p => new CategoriesViewModel.Category()
                 {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Description = c.Description,
-                    TotalProducts = c.TotalProducts
-                }).ToList();
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    TotalProducts = p.TotalProducts
+                })
+                .ToList();
+
+            CategoriesViewModel.Categories = new StaticPagedList<CategoriesViewModel.Category>(categoriesList, selectedPage, itemsPerPage, response.TotalItems);
         }
     }
 
     public class CategoriesViewModel
     {
-        public List<Category> Categories { get; set; } = new List<Category>();
+        public IPagedList<Category> Categories { get; set; }
 
         public class Category
         {

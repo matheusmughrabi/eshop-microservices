@@ -1,12 +1,9 @@
 ﻿@page
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
 @model IndexModel
 @{
 }
-
-@*<div class="d-flex justify-content-between">
-    <h1>Products catalog</h1>
-    <a class="btn btn-primary" asp-page="./Create">Create</a>
-    </div>*@
 
 <div>
     <h1>Products catalog</h1>
@@ -42,5 +39,22 @@
 
     </tbody>
 </table>
+
+<div class="d-flex flex-row-reverse bd-highlight">
+    @Html.PagedListPager(
+        Model.CategoriesViewModel.Categories, 
+        selectedPage => Url.Action("Index", new { selectedPage }),  
+        new PagedListRenderOptions 
+        { 
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" },
+            LinkToFirstPageFormat = "First",
+            LinkToPreviousPageFormat = "Previous", 
+            LinkToNextPageFormat = "Next", 
+            LinkToLastPageFormat = "Last",
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always
+        })
+</div>
 
 

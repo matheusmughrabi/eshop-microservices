@@ -1,4 +1,6 @@
-﻿namespace eShop.AdminUI.Services.ProductApi
+﻿using X.PagedList;
+
+namespace eShop.AdminUI.Services.ProductApi
 {
     public partial class ProductApiClient
     {
@@ -6,7 +8,8 @@
 
         public class GetCategoriesPaginatedResponse
         {
-            public List<Category> Categories { get; set; } = new List<Category>();
+            public int TotalItems { get; set; }
+            public List<Category> Categories { get; set; }
 
             public class Category
             {

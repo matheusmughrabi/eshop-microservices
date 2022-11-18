@@ -21,6 +21,7 @@ namespace eShop.ProductApi.Features.Category
 
     public class GetCategoriesPaginatedQueryResponse
     {
+        public int TotalItems { get; set; }
         public List<Category> Categories { get; set; }
 
         public class Category
@@ -59,7 +60,11 @@ namespace eShop.ProductApi.Features.Category
                 })
                 .ToListAsync();
 
-            return new GetCategoriesPaginatedQueryResponse() { Categories = categories };
+            var totalItems = await _productDbContext.Category
+                .AsNoTracking()
+                .CountAsync();
+
+            return new GetCategoriesPaginatedQueryResponse() { TotalItems = totalItems, Categories = categories };
         }
     }
 }
