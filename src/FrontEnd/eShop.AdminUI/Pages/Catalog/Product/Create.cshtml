@@ -3,22 +3,31 @@
 @{
 }
 
-<form method="post">
-    <input type="hidden" asp-for="CreateProductViewModel.CategoryId" />
+<div class="card shadow">
+    <div class="card-body">
+        <div>
+            <h4 class="card-title">Create product</h4>
+        </div>
 
-    <div class="mb-3">
-        <label class="form-label" asp-for="CreateProductViewModel.Name">Name</label>
-        <input class="form-control" asp-for="CreateProductViewModel.Name">
+        <form method="post">
+            <input type="hidden" asp-for="CreateProductViewModel.CategoryId" />
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="CreateProductViewModel.Name">Name</label>
+                <input class="form-control" asp-for="CreateProductViewModel.Name">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="CreateProductViewModel.Description">Description</label>
+                <input class="form-control" asp-for="CreateProductViewModel.Description">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="CreateProductViewModel.Price">Price</label>
+                <input class="form-control" asp-for="CreateProductViewModel.Price">
+            </div>
+            <div class="form-group">
+                <a asp-page="/Catalog/Category/Details" asp-route-categoryId="@Model.CreateProductViewModel.CategoryId" class="btn btn-primary">Return to category</a>
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label class="form-label" asp-for="CreateProductViewModel.Description">Description</label>
-        <input class="form-control" asp-for="CreateProductViewModel.Description">
-    </div>
-    <div class="mb-3">
-        <label class="form-label" asp-for="CreateProductViewModel.Price">Price</label>
-        <input class="form-control" asp-for="CreateProductViewModel.Price">
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
-    </div>
-</form>
+</div>
