@@ -19,6 +19,7 @@ namespace eShop.ProductApi.Entity
         public string Name { get; private set; }
         public string? Description { get; private set; }
         public decimal Price { get; private set; }
+        public Guid CategoryId { get; private set; }
         public CategoryEntity Category { get; set; }
 
         public void Update(string name, decimal price, string? description = null)
@@ -29,6 +30,11 @@ namespace eShop.ProductApi.Entity
             Name = name;
             Description = description;
             Price = price;
+        }
+
+        public void ChangeCategory(Guid categoryId)
+        {
+            CategoryId = categoryId;
         }
 
         private void GuardAgainstNullName(string name)

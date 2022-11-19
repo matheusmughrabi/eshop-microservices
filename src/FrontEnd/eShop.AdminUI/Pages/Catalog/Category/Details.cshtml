@@ -13,7 +13,7 @@
 
         <div class="d-flex justify-content-between">
             <h4 class="card-title">@Model.CategoryDetailsViewModel.Name category</h4>
-            <a class="btn btn-primary mb-3" asp-page="/Catalog/Product/Create" asp-route-categoryId="@Model.CategoryDetailsViewModel.Id">New product</a>
+            <a class="btn btn-primary mb-3" asp-page="/Catalog/Product/Create" asp-route-categoryId="@Model.CategoryDetailsViewModel.Id"><i class="bi bi-plus-circle" style="font-size: 1rem;"></i> New product</a>
         </div>
 
 
@@ -31,7 +31,8 @@
                             </div>
                             <p class="mb-1">@product.Description</p>
                         </a>
-                        <button class="btn btn-danger delete-product-button" id="delete-product-button-@product.Id" value="@product.Id">Delete</button>
+                       
+                        <button class="btn btn-danger delete-product-button" id="delete-product-button-@product.Id" value="@product.Id"> <i class="bi bi-trash"></i></button>
                     </div>
                 }
             </div>
