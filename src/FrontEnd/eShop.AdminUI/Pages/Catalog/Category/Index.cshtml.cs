@@ -34,6 +34,12 @@ namespace eShop.AdminUI.Pages.Catalog.Category
 
             CategoriesViewModel.Categories = new StaticPagedList<CategoriesViewModel.Category>(categoriesList, selectedPage, itemsPerPage, response.TotalItems);
         }
+
+        public async Task<IActionResult> OnPostDeleteCategory([FromBody] ProductApiClient.DeleteCategoryRequest data)
+        {
+            var response = await _productApiClient.DeleteCategory(data);
+            return new JsonResult(response);
+        }
     }
 
     public class CategoriesViewModel

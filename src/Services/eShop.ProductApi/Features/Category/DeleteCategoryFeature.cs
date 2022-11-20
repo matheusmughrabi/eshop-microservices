@@ -61,6 +61,7 @@ namespace eShop.ProductApi.Features.Category
 
             _productDbContext.Remove(categoryFromDb);
             await _productDbContext.SaveChangesAsync();
+            _notifications.Add(new Notification() { Message = $"Category {categoryFromDb.Name} deleted.", Type = ENotificationType.Informative });
 
             transaction.Commit();
 

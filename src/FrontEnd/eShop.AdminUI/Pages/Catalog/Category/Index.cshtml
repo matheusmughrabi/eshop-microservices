@@ -5,6 +5,8 @@
 @{
 }
 
+@Html.AntiForgeryToken()
+
 <div class="card shadow">
     <div class="card-body">
 
@@ -37,6 +39,7 @@
                         <td scope="row">
                             <a class="btn btn-primary" asp-page="./Details" asp-route-categoryId="@category.Id">Details</a>
                             <a class="btn btn-secondary" asp-page="./Edit" asp-route-id="@category.Id">Edit</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-category-modal" categoryId="@category.Id" totalProducts="@category.TotalProducts">Delete</button>
                         </td>
                     </tr>
                 }
@@ -46,22 +49,114 @@
 
         <div class="d-flex flex-row-reverse bd-highlight">
             @Html.PagedListPager(
-                Model.CategoriesViewModel.Categories,
-                selectedPage => Url.Action("Index", new { selectedPage }),
-                new PagedListRenderOptions
-                {
-                LiElementClasses = new string[] { "page-item" },
-                PageClasses = new string[] { "page-link" },
-                LinkToFirstPageFormat = "First",
-                LinkToPreviousPageFormat = "Previous",
-                LinkToNextPageFormat = "Next",
-                LinkToLastPageFormat = "Last",
-                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                DisplayLinkToNextPage = PagedListDisplayMode.Always
+            Model.CategoriesViewModel.Categories,
+            selectedPage => Url.Action("Index", new { selectedPage }),
+            new PagedListRenderOptions
+            {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" },
+            LinkToFirstPageFormat = "First",
+            LinkToPreviousPageFormat = "Previous",
+            LinkToNextPageFormat = "Next",
+            LinkToLastPageFormat = "Last",
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always
             })
         </div>
 
     </div>
 </div>
+
+<div class="modal fade" id="delete-category-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Delete category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-total-products-message"></p>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="delete-category-options" id="delete-category-options-deleteAll" checked value="true">
+                    <label class="form-check-label" for="delete-category-options-deleteAll">
+                        Delete products
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="delete-category-options" id="delete-category-options-moveToOthers" value="false">
+                    <label class="form-check-label" for="delete-category-options-moveToOthers">
+                        Move to others category
+                    </label>
+                </div>
+
+                @*<div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Categories
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      @foreach (var category in @Model.CategoriesViewModel.Categories)
+                      {
+                          <li><a class="dropdown-item" href="#">@category.Name</a></li>
+                      }
+                    
+                  </ul>
+                </div>*@
+
+                @*<select asp-for="Requeststatus" asp-items="@Model.RequeststatusList"></select>*@
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirm-category-deletion-button" type="button" class="btn btn-danger">Confirm deletion</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+        $("#confirm-category-deletion-button").click(function(){
+
+            let categoryToDelete = $(this).attr("categoryId");
+            var deleteAllProducts = $("input[name='delete-category-options']:checked").val().toLowerCase() == "true";
+
+            $.ajax({
+               url: '/Catalog/Category?handler=DeleteCategory',
+               type: 'POST',
+               contentType: 'application/json',
+               headers: {
+                  RequestVerificationToken:
+                      $('input:hidden[name="__RequestVerificationToken"]').val()
+               },
+               data: JSON.stringify({ Id : categoryToDelete, DeleteProducts: deleteAllProducts}),
+               success: function( data, textStatus, jQxhr ){
+                    alert(data.notifications[0].message);
+                    $('#delete-category-modal').modal('hide');
+                    //removeProductListItem(productToDeleteId);
+                },
+               error: function( jqXhr, textStatus, errorThrown ){
+                    alert("error when trying to delete category");
+                }
+            });
+    });
+
+    var deleteCategoryModal = document.getElementById('delete-category-modal');
+
+    deleteCategoryModal.addEventListener('show.bs.modal', function (event) {
+      let categoryToDelete = event.relatedTarget.getAttribute('categoryId');
+      $('#confirm-category-deletion-button').attr('categoryId', categoryToDelete);
+
+      var totalProducts = event.relatedTarget.getAttribute('totalProducts');
+      $('#modal-total-products-message').text(`This category contains ${totalProducts} products.`);
+
+    })
+
+    function displayCategoriesDropdown(){
+
+    }
+
+</script>
+}
 
 
