@@ -9,13 +9,10 @@
 
 <div class="card shadow">
     <div class="card-body">
-
-
         <div class="d-flex justify-content-between">
             <h4 class="card-title">Categories</h4>
             <a class="mb-1 btn btn-primary" asp-page="./Create">New category</a>
         </div>
-
 
         <table class="table">
             <thead>
@@ -28,7 +25,6 @@
                 </tr>
             </thead>
             <tbody>
-
                 @foreach (var category in Model.CategoriesViewModel.Categories)
                 {
                     <tr>
@@ -43,7 +39,6 @@
                         </td>
                     </tr>
                 }
-
             </tbody>
         </table>
 
@@ -77,33 +72,12 @@
             <div class="modal-body">
                 <p id="modal-total-products-message"></p>
 
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="delete-category-options" id="delete-category-options-deleteAll" checked value="true">
-                    <label class="form-check-label" for="delete-category-options-deleteAll">
-                        Delete products
+                <div class="form-check" id="delete-products-form-check">
+                    <input class="form-check-input" type="checkbox" id="delete-products-check">
+                    <label class="form-check-label" for="delete-products-check">
+                        Delete all products in this category <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" title="If you don´t check this field, then the products will be kept but without a category"></i>
                     </label>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="delete-category-options" id="delete-category-options-moveToOthers" value="false">
-                    <label class="form-check-label" for="delete-category-options-moveToOthers">
-                        Move to others category
-                    </label>
-                </div>
-
-                @*<div class="dropdown">
-                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    Categories
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      @foreach (var category in @Model.CategoriesViewModel.Categories)
-                      {
-                          <li><a class="dropdown-item" href="#">@category.Name</a></li>
-                      }
-                    
-                  </ul>
-                </div>*@
-
-                @*<select asp-for="Requeststatus" asp-items="@Model.RequeststatusList"></select>*@
 
             </div>
             <div class="modal-footer">
@@ -116,29 +90,29 @@
 
 @section Scripts{
 <script>
-        $("#confirm-category-deletion-button").click(function(){
+    $("#confirm-category-deletion-button").click(function(){
 
-            let categoryToDelete = $(this).attr("categoryId");
-            var deleteAllProducts = $("input[name='delete-category-options']:checked").val().toLowerCase() == "true";
+        let categoryToDelete = $(this).attr("categoryId");
+        var deleteAllProducts = $("#delete-products-check").is(':checked');
 
-            $.ajax({
-               url: '/Catalog/Category?handler=DeleteCategory',
-               type: 'POST',
-               contentType: 'application/json',
-               headers: {
-                  RequestVerificationToken:
-                      $('input:hidden[name="__RequestVerificationToken"]').val()
-               },
-               data: JSON.stringify({ Id : categoryToDelete, DeleteProducts: deleteAllProducts}),
-               success: function( data, textStatus, jQxhr ){
-                    alert(data.notifications[0].message);
-                    $('#delete-category-modal').modal('hide');
-                    //removeProductListItem(productToDeleteId);
-                },
-               error: function( jqXhr, textStatus, errorThrown ){
-                    alert("error when trying to delete category");
-                }
-            });
+        $.ajax({
+            url: '/Catalog/Category?handler=DeleteCategory',
+            type: 'POST',
+            contentType: 'application/json',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify({ Id : categoryToDelete, DeleteProducts: deleteAllProducts}),
+            success: function( data, textStatus, jQxhr ){
+                alert(data.notifications[0].message);
+                $('#delete-category-modal').modal('hide');
+                //removeProductListItem(productToDeleteId);
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                alert("error when trying to delete category");
+            }
+        });
     });
 
     var deleteCategoryModal = document.getElementById('delete-category-modal');
@@ -147,14 +121,14 @@
       let categoryToDelete = event.relatedTarget.getAttribute('categoryId');
       $('#confirm-category-deletion-button').attr('categoryId', categoryToDelete);
 
-      var totalProducts = event.relatedTarget.getAttribute('totalProducts');
+      let totalProducts = event.relatedTarget.getAttribute('totalProducts');
       $('#modal-total-products-message').text(`This category contains ${totalProducts} products.`);
 
+
+      if(totalProducts == 0){
+        $('#delete-products-form-check').hide()
+      }
     })
-
-    function displayCategoriesDropdown(){
-
-    }
 
 </script>
 }

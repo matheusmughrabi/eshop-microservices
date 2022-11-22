@@ -8,7 +8,6 @@
         {
             public Guid Id { get; set; }
             public bool DeleteProducts { get; set; }
-            public Guid? CategoryIdToMoveProducts { get; set; }
         }
 
         public class DeleteCategoryResponse

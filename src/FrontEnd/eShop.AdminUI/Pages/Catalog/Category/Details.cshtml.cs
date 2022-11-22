@@ -1,6 +1,7 @@
 using eShop.AdminUI.Services.ProductApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
 
 namespace eShop.AdminUI.Pages.Catalog.Category
@@ -15,6 +16,7 @@ namespace eShop.AdminUI.Pages.Catalog.Category
         }
 
         public CategoryDetailsViewModel CategoryDetailsViewModel { get; set; }
+        public List<SelectListItem> CategoriesDropDown { get; set; }
 
         public async Task<IActionResult> OnGetAsync(Guid categoryId, int selectedPage = 1)
         {
@@ -25,8 +27,29 @@ namespace eShop.AdminUI.Pages.Catalog.Category
                 return NotFound();
 
             CategoryDetailsViewModel = response.MapToCategoryDetailsViewModel(selectedPage, itemsPerPage);
+
+            var categories = await _productApiClient.GetCategoriesPaginated(1, 100);
+
+            CategoriesDropDown = new List<SelectListItem>();
+            foreach (var category in categories.Categories.Where(c => c.Id != categoryId))
+            {
+                CategoriesDropDown.Add(new SelectListItem() { Value = category.Id.ToString(), Text = category.Name });
+            }
+
             return Page();
         }
+
+        public async Task<JsonResult> OnPostMoveProducts([FromBody] ProductApiClient.MoveProductsRequest request)
+        {
+            var response = await _productApiClient.MoveProducts(request);
+            return new JsonResult(response);
+        }
+    }
+
+    public class CategoryViewModel
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class CategoryDetailsViewModel

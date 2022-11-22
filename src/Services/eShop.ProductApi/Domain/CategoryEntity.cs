@@ -30,6 +30,11 @@ namespace eShop.ProductApi.Entity
             Description = description;
         }
 
+        public void RemoveProducts()
+        {
+            Products.Clear();
+        }
+
         private void ValidateIfNullOrEmptyName(string name)
         {
             if (string.IsNullOrEmpty(name))

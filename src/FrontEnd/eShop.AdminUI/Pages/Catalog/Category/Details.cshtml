@@ -13,10 +13,12 @@
 
         <div class="d-flex justify-content-between">
             <h4 class="card-title">@Model.CategoryDetailsViewModel.Name category</h4>
-            <a class="btn btn-primary mb-3" asp-page="/Catalog/Product/Create" asp-route-categoryId="@Model.CategoryDetailsViewModel.Id"><i class="bi bi-plus-circle" style="font-size: 1rem;"></i> New product</a>
+            <!-- Button trigger modal -->
+            <div>
+                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#move-products-modal"><i class="bi bi-arrow-up-right-square"></i> Move products</button>
+                <a class="btn btn-primary mb-2" asp-page="/Catalog/Product/Create" asp-route-categoryId="@Model.CategoryDetailsViewModel.Id"><i class="bi bi-plus-circle" style="font-size: 1rem;"></i> New product</a>
+            </div>
         </div>
-
-
 
         @if (Model.CategoryDetailsViewModel.Products.Count > 0)
         {
@@ -31,7 +33,7 @@
                             </div>
                             <p class="mb-1">@product.Description</p>
                         </a>
-                       
+
                         <button class="btn btn-danger delete-product-button" id="delete-product-button-@product.Id" value="@product.Id"> <i class="bi bi-trash"></i></button>
                     </div>
                 }
@@ -44,23 +46,45 @@
 
         <div class="d-flex flex-row-reverse bd-highlight">
             @Html.PagedListPager(
-                Model.CategoryDetailsViewModel.Products,
-                selectedPage => Url.Action("Details", new { categoryId = @Model.CategoryDetailsViewModel.Id, selectedPage = selectedPage }),
-                new PagedListRenderOptions
-                {
-                LiElementClasses = new string[] { "page-item" },
-                PageClasses = new string[] { "page-link" },
-                LinkToFirstPageFormat = "First",
-                LinkToPreviousPageFormat = "Previous",
-                LinkToNextPageFormat = "Next",
-                LinkToLastPageFormat = "Last",
-                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                DisplayLinkToNextPage = PagedListDisplayMode.Always
+            Model.CategoryDetailsViewModel.Products,
+            selectedPage => Url.Action("Details", new { categoryId = @Model.CategoryDetailsViewModel.Id, selectedPage = selectedPage }),
+            new PagedListRenderOptions
+            {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" },
+            LinkToFirstPageFormat = "First",
+            LinkToPreviousPageFormat = "Previous",
+            LinkToNextPageFormat = "Next",
+            LinkToLastPageFormat = "Last",
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always
             })
         </div>
 
         <div class="mt-3">
             <a asp-page="./Index" class="btn btn-primary">Return to list</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="move-products-modal" tabindex="-1" aria-labelledby="move-products-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="move-products-modal-label">Move products</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choose the category you want to move the products to.</p>
+
+                <select id="destine-category-dropdown" asp-items="Model.CategoriesDropDown" class="form-select"></select>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="move-products-confirm-button">Confirm</button>
+            </div>
         </div>
     </div>
 </div>
@@ -94,6 +118,34 @@
     function removeProductListItem(productToDeleteId){
         $(`#product-div-${productToDeleteId}`).remove()
     }
+
+    // Obter todas as categorias
+    $("#move-products-confirm-button").click(function(){
+
+        var destineCategoryId = $('#destine-category-dropdown').val();
+        var originalCategoryId = '@Model.CategoryDetailsViewModel.Id'
+
+        $.ajax({
+           url: '/Catalog/Category/Details?handler=MoveProducts',
+           type: 'POST',
+           contentType: 'application/json',
+           headers: {
+              RequestVerificationToken:
+                  $('input:hidden[name="__RequestVerificationToken"]').val()
+           },
+           data: JSON.stringify({DestineCategoryId : destineCategoryId, OriginalCategoryId : originalCategoryId}),
+           success: function( data, textStatus, jQxhr ){
+                alert(data.notifications[0].message);
+                $('#move-products-modal').modal('hide');
+                if(data.notifications[0].type == "1"){
+                    location.reload(true);
+                }
+            },
+           error: function( jqXhr, textStatus, errorThrown ){
+                alert("error when trying to delete product");
+            }
+        });
+    });
 
 </script>
 }

@@ -17,8 +17,10 @@ namespace eShop.ProductApi.DataAccess.Mappings
             builder.Property(c => c.Description)
                     .HasColumnType("nvarchar(500)");
 
-            builder.HasMany(c => c.Products)
+            builder
+                .HasMany(c => c.Products)
                 .WithOne(p => p.Category)
+                //.IsRequired(false)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
