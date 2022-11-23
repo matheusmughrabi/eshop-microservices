@@ -34,7 +34,10 @@
                             <p class="mb-1">@product.Description</p>
                         </a>
 
-                        <button class="btn btn-danger delete-product-button" id="delete-product-button-@product.Id" value="@product.Id"> <i class="bi bi-trash"></i></button>
+                        <div class="float-end">
+                            <button class="btn btn-primary move-product-by-id-button" id="move-product-by-id-button-@product.Id" productId="@product.Id" data-bs-toggle="modal" data-bs-target="#move-product-by-id-modal"><i class="bi bi-arrow-up-right-square"></i> Move</button>
+                            <button class="btn btn-danger delete-product-button ml-2" id="delete-product-button-@product.Id" value="@product.Id"> <i class="bi bi-trash"></i></button>
+                        </div>
                     </div>
                 }
             </div>
@@ -89,6 +92,27 @@
     </div>
 </div>
 
+<div class="modal fade" id="move-product-by-id-modal" tabindex="-1" aria-labelledby="move-product-by-id-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="move-product-by-id-modal-label">Move product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choose the category you want to move the product to.</p>
+
+                <select id="destine-category-dropdown-modal-by-id" asp-items="Model.CategoriesDropDown" class="form-select"></select>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="move-product-by-id-confirm-button">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
 <script>
     $(".delete-product-button").click(function(){
@@ -119,7 +143,6 @@
         $(`#product-div-${productToDeleteId}`).remove()
     }
 
-    // Obter todas as categorias
     $("#move-products-confirm-button").click(function(){
 
         var destineCategoryId = $('#destine-category-dropdown').val();
@@ -137,6 +160,40 @@
            success: function( data, textStatus, jQxhr ){
                 alert(data.notifications[0].message);
                 $('#move-products-modal').modal('hide');
+                if(data.notifications[0].type == "1"){
+                    location.reload(true);
+                }
+            },
+           error: function( jqXhr, textStatus, errorThrown ){
+                alert("error when trying to delete product");
+            }
+        });
+    });
+
+    var moveProductByIdModal = document.getElementById('move-product-by-id-modal');
+
+    moveProductByIdModal.addEventListener('show.bs.modal', function (event) {
+      let productId = event.relatedTarget.getAttribute('productId');
+      $('#move-product-by-id-confirm-button').attr('productId', productId);
+    })
+
+     $("#move-product-by-id-confirm-button").click(function(){
+
+        var destineCategoryId = $('#destine-category-dropdown-modal-by-id').val();
+        var productId = $(this).attr("productId");
+
+        $.ajax({
+           url: '/Catalog/Category/Details?handler=MoveProductById',
+           type: 'POST',
+           contentType: 'application/json',
+           headers: {
+              RequestVerificationToken:
+                  $('input:hidden[name="__RequestVerificationToken"]').val()
+           },
+           data: JSON.stringify({DestineCategoryId : destineCategoryId, ProductId : productId}),
+           success: function( data, textStatus, jQxhr ){
+                alert(data.notifications[0].message);
+                $('#move-product-by-id-modal').modal('hide');
                 if(data.notifications[0].type == "1"){
                     location.reload(true);
                 }

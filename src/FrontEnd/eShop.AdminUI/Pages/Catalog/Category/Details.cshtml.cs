@@ -44,6 +44,12 @@ namespace eShop.AdminUI.Pages.Catalog.Category
             var response = await _productApiClient.MoveProducts(request);
             return new JsonResult(response);
         }
+
+        public async Task<JsonResult> OnPostMoveProductById([FromBody] ProductApiClient.MoveProductByIdRequest request)
+        {
+            var response = await _productApiClient.MoveProductById(request);
+            return new JsonResult(response);
+        }
     }
 
     public class CategoryViewModel

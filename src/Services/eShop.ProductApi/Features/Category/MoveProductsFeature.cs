@@ -38,11 +38,11 @@ namespace eShop.ProductApi.Features.Category
         public List<Notification> Notifications { get; set; }
     }
 
-    public class MoveProductsCommanddHandler : IRequestHandler<MoveProductsCommand, MoveProductsCommandResponse>
+    public class MoveProductsCommandHandler : IRequestHandler<MoveProductsCommand, MoveProductsCommandResponse>
     {
         private readonly ProductDbContext _productDbContext;
 
-        public MoveProductsCommanddHandler(ProductDbContext productDbContext)
+        public MoveProductsCommandHandler(ProductDbContext productDbContext)
         {
             _productDbContext = productDbContext;
         }
