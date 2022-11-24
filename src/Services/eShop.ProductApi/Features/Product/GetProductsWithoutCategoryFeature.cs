@@ -48,9 +48,10 @@ namespace eShop.ProductApi.Features.Product
 
             var products = await _productDbContext.Product
                 .AsNoTracking()
+                .Where(c => c.CategoryId == null)
+                .OrderBy(c => c.Name)
                 .Skip(skip)
                 .Take(request.ItemsPerPage)
-                .OrderBy(c => c.Name)
                 .Select(c => new GetProductsWithoutCategoryResponse.Product()
                 {
                     Id = c.Id,

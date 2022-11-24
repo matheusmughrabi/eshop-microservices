@@ -1,6 +1,6 @@
 using eShop.AdminUI.Services.ProductApi;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
 
 namespace eShop.AdminUI.Pages.Catalog.Pendencies
@@ -15,12 +15,21 @@ namespace eShop.AdminUI.Pages.Catalog.Pendencies
         }
 
         public ProductsWithoutCategoryViewModel ProductsWithoutCategoryViewModel { get; set; } = new ProductsWithoutCategoryViewModel();
+        public List<SelectListItem> CategoriesDropDown { get; set; }
 
         public async Task OnGet(int selectedpage = 1)
         {
             var itemsPerPage = 3;
             var response = await _productApiClient.GetProductsWithoutCategory(selectedpage, itemsPerPage);
             ProductsWithoutCategoryViewModel.Products = response.MapToProductsWithoutCategoryViewModel(selectedpage, itemsPerPage);
+
+            var categories = await _productApiClient.GetCategoriesPaginated(1, 100);
+
+            CategoriesDropDown = new List<SelectListItem>();
+            foreach (var category in categories.Categories)
+            {
+                CategoriesDropDown.Add(new SelectListItem() { Value = category.Id.ToString(), Text = category.Name });
+            }
         }
     }
 

@@ -6,42 +6,46 @@
 @{
 }
 
+@Html.AntiForgeryToken()
+
 <div class="card shadow">
     <div class="card-body">
         <div class="">
             <h4 class="card-title">Products without category</h4>
         </div>
 
-         <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col" hidden>Id</th>
-                    <th scope="col" style="width: 20%">Name</th>
-                    <th scope="col" style="width: 30%">Description</th>
-                    <th scope="col" style="width: 20%">Price</th>
-                    <th scope="col" style="width: 30%">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var product in Model.ProductsWithoutCategoryViewModel.Products)
-                {
+        @if (Model.ProductsWithoutCategoryViewModel.Products.Count > 0)
+        {
+            <table id="products-without-category-table" class="table">
+                <thead>
                     <tr>
-                        <td scope="row" hidden>@product.Id</td>
-                        <td scope="row">@product.Name</td>
-                        <td scope="row">@product.Description</td>
-                        <td scope="row">@product.Price.ToString("C", CultureInfo.CurrentCulture)</td>
-                        <td scope="row">
-                            <a class="btn btn-primary" asp-page="./Details" asp-route-categoryId="@product.Id">Move</a>
-                            <a class="btn btn-secondary" asp-page="./Edit" asp-route-id="@product.Id">Delete</a>
-                            @*<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-category-modal" categoryId="@category.Id" totalProducts="@category.TotalProducts">Delete</button>*@
-                        </td>
+                        <th scope="col" hidden>Id</th>
+                        <th scope="col" style="width: 20%">Name</th>
+                        <th scope="col" style="width: 30%">Description</th>
+                        <th scope="col" style="width: 20%">Price</th>
+                        <th scope="col" style="width: 30%">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.ProductsWithoutCategoryViewModel.Products)
+                    {
+                        <tr id="tr-@product.Id">
+                            <td scope="row" hidden>@product.Id</td>
+                            <td scope="row">@product.Name</td>
+                            <td scope="row">@product.Description</td>
+                            <td scope="row">@product.Price.ToString("C", CultureInfo.CurrentCulture)</td>
+                            <td scope="row">
 
-        <div class="d-flex flex-row-reverse bd-highlight">
-            @Html.PagedListPager(
+                                <button class="btn btn-primary move-product-by-id-button" id="move-product-by-id-button-@product.Id" productId="@product.Id" data-bs-toggle="modal" data-bs-target="#move-product-by-id-modal"><i class="bi bi-arrow-up-right-square"></i> Move</button>
+                                <button class="btn btn-danger delete-product-button ml-2" id="delete-product-button-@product.Id" value="@product.Id"> <i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="d-flex flex-row-reverse bd-highlight">
+                @Html.PagedListPager(
             Model.ProductsWithoutCategoryViewModel.Products,
             selectedPage => Url.Action("Index", new { selectedPage }),
             new PagedListRenderOptions
@@ -55,7 +59,60 @@
             DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
             DisplayLinkToNextPage = PagedListDisplayMode.Always
             })
-        </div>
+            </div>
+        }
+        else
+        {
+            <p>There are no products without a category</p>
+        }
+
 
     </div>
 </div>
+
+<partial name="_MoveProductByIdModal" model="Model.CategoriesDropDown" />
+
+@section Scripts{
+<script>
+    $(".delete-product-button").click(function(){
+
+            let productToDeleteId = $(this).attr("value");
+
+            $.ajax({
+                url: '/Catalog/Product/Delete?handler=DeleteProduct',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify({ Id : productToDeleteId }),
+                success: function( data, textStatus, jQxhr ){
+                    alert(data.notifications[0].message);
+
+                    if(data.success){
+                        removeProductFromTable(productToDeleteId);
+                    }
+
+                    let totalRows = $('#products-without-category-table >tbody >tr').length;
+
+                    if( totalRows == 0){
+                        location.reload(true);
+                    }
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    alert("error when trying to delete product");
+                }
+            });
+        });
+
+        function removeProductFromTable(productToDeleteId){
+            $(`#tr-${productToDeleteId}`).remove()
+        }
+</script>
+
+<script src="~/js/moveProductsByIdModal.js"></script>
+
+}
+
+
