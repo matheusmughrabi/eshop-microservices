@@ -19,7 +19,7 @@ namespace eShop.AdminUI.Pages.Catalog.Category
 
         public async Task OnGetAsync(int selectedPage = 1)
         {
-            var itemsPerPage = 5;
+            var itemsPerPage = 3;
             var response = await _productApiClient.GetCategoriesPaginated(selectedPage, itemsPerPage);
 
             var categoriesList = response.Categories

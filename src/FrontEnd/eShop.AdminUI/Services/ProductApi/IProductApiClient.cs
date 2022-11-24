@@ -14,5 +14,6 @@ namespace eShop.AdminUI.Services.ProductApi
         Task<ProductApiClient.DeleteCategoryResponse> DeleteCategory(ProductApiClient.DeleteCategoryRequest request);
         Task<ProductApiClient.MoveProductsResponse> MoveProducts(ProductApiClient.MoveProductsRequest request);
         Task<ProductApiClient.MoveProductByIdResponse> MoveProductById(ProductApiClient.MoveProductByIdRequest request);
+        Task<ProductApiClient.GetProductsWithoutCategoryResponse> GetProductsWithoutCategory(int page, int itemsPerPage);
     }
 }

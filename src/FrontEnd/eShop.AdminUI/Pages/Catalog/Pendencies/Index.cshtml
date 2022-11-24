@@ -1,0 +1,61 @@
+﻿@page
+@using System.Globalization
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model eShop.AdminUI.Pages.Catalog.Pendencies.IndexModel
+@{
+}
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="">
+            <h4 class="card-title">Products without category</h4>
+        </div>
+
+         <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" hidden>Id</th>
+                    <th scope="col" style="width: 20%">Name</th>
+                    <th scope="col" style="width: 30%">Description</th>
+                    <th scope="col" style="width: 20%">Price</th>
+                    <th scope="col" style="width: 30%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.ProductsWithoutCategoryViewModel.Products)
+                {
+                    <tr>
+                        <td scope="row" hidden>@product.Id</td>
+                        <td scope="row">@product.Name</td>
+                        <td scope="row">@product.Description</td>
+                        <td scope="row">@product.Price.ToString("C", CultureInfo.CurrentCulture)</td>
+                        <td scope="row">
+                            <a class="btn btn-primary" asp-page="./Details" asp-route-categoryId="@product.Id">Move</a>
+                            <a class="btn btn-secondary" asp-page="./Edit" asp-route-id="@product.Id">Delete</a>
+                            @*<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-category-modal" categoryId="@category.Id" totalProducts="@category.TotalProducts">Delete</button>*@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex flex-row-reverse bd-highlight">
+            @Html.PagedListPager(
+            Model.ProductsWithoutCategoryViewModel.Products,
+            selectedPage => Url.Action("Index", new { selectedPage }),
+            new PagedListRenderOptions
+            {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" },
+            LinkToFirstPageFormat = "First",
+            LinkToPreviousPageFormat = "Previous",
+            LinkToNextPageFormat = "Next",
+            LinkToLastPageFormat = "Last",
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always
+            })
+        </div>
+
+    </div>
+</div>
