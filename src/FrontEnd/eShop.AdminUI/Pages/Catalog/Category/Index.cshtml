@@ -35,8 +35,8 @@
                             <td scope="row">@category.TotalProducts</td>
                             <td scope="row">
                                 <a class="btn btn-primary" asp-page="./Details" asp-route-categoryId="@category.Id">Details</a>
-                                <a class="btn btn-secondary" asp-page="./Edit" asp-route-id="@category.Id">Edit</a>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-category-modal" categoryId="@category.Id" totalProducts="@category.TotalProducts">Delete</button>
+                                <a class="btn btn-secondary" asp-page="./Edit" asp-route-id="@category.Id"><i class="bi bi-pencil-square"></i></a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-category-modal" categoryId="@category.Id" totalProducts="@category.TotalProducts"><i class="bi bi-trash"></i></button>
                             </td>
                         </tr>
                     }
