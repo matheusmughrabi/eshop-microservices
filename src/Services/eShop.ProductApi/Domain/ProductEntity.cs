@@ -20,7 +20,7 @@ namespace eShop.ProductApi.Entity
         public string? Description { get; private set; }
         public decimal Price { get; private set; }
         public Guid? CategoryId { get; private set; }
-        public CategoryEntity? Category { get; set; }
+        public CategoryEntity? Category { get; }
 
         public void Update(string name, decimal price, string? description = null)
         {
