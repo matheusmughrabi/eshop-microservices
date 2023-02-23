@@ -1,3 +1,4 @@
+using eShop.AdminUI.Services.IdentityApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -5,6 +6,13 @@ namespace eShop.AdminUI.Pages.Authentication;
 
 public class LoginModel : PageModel
 {
+    private readonly IIdentityApiClient _identityApiClient;
+
+    public LoginModel(IIdentityApiClient identityApiClient)
+    {
+        _identityApiClient = identityApiClient;
+    }
+
     [BindProperty]
     public LoginRequest LoginRequest { get; set; }
 
@@ -14,12 +22,15 @@ public class LoginModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        //var response = await _productApiClient.CreateCategory(CreateCategoryViewModel.MapToCreateRequest());
+        var response = await _identityApiClient.GetAccessToken(new IdentityApiClient.GetAccessTokenRequest()
+        {
+            Username = LoginRequest.Username,
+            Password = LoginRequest.Password
+        });
 
-        //if (!response.Success)
-        //    return new JsonResult(response);
+        Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
 
-        return RedirectToPage("./Index");
+        return RedirectToPage("/Catalog/Product/Create");
     }
 }
 

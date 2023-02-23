@@ -3,5 +3,6 @@
     public static class ApiClients
     {
         public const string ProductApiKey = "ProductApi";
+        public const string IdentityApiKey = "IdentityApi";
     }
 }

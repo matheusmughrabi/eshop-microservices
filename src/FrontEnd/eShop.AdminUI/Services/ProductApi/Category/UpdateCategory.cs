@@ -2,7 +2,7 @@
 {
     public partial class ProductApiClient
     {
-        public async Task<UpdateCategoryResponse> UpdateCategory(UpdateCategoryRequest request) =>  await _genericApiClient.PutAsync<UpdateCategoryRequest, UpdateCategoryResponse>(ApiKey, "api/Category/Update", request);       
+        public async Task<UpdateCategoryResponse> UpdateCategory(UpdateCategoryRequest request) =>  await _genericApiClient.PutAsync<UpdateCategoryRequest, UpdateCategoryResponse>(ApiKey, "/api/Category/Update", request);       
 
         public class UpdateCategoryRequest
         {

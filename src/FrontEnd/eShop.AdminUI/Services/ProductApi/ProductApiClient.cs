@@ -6,9 +6,9 @@ namespace eShop.AdminUI.Services.ProductApi
     public partial class ProductApiClient : IProductApiClient
     {
         private const string ApiKey = ApiClients.ProductApiKey;
-        private readonly IGenericApiClient _genericApiClient;
+        private readonly IApiClient _genericApiClient;
 
-        public ProductApiClient(IGenericApiClient genericApiClient)
+        public ProductApiClient(IApiClient genericApiClient)
         {
             _genericApiClient = genericApiClient;
         }

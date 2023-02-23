@@ -1,10 +1,12 @@
 using eShop.AdminUI.Container;
+using eShop.AdminUI.DIContainer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCustomRouting();
 builder.Services.RegisterHttpClients(builder.Configuration);
+builder.Services.RegisterAuthentication();
 
 var app = builder.Build();
 
@@ -21,6 +23,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

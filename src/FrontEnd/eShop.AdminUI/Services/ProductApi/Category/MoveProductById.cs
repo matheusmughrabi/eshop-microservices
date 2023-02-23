@@ -2,7 +2,7 @@
 {
     public partial class ProductApiClient
     {
-        public async Task<MoveProductByIdResponse> MoveProductById(MoveProductByIdRequest request) => await _genericApiClient.PutAsync<MoveProductByIdRequest, MoveProductByIdResponse>(ApiKey, "api/Category/MoveProductById", request);
+        public async Task<MoveProductByIdResponse> MoveProductById(MoveProductByIdRequest request) => await _genericApiClient.PutAsync<MoveProductByIdRequest, MoveProductByIdResponse>(ApiKey, "/api/Category/MoveProductById", request);
 
         public class MoveProductByIdRequest
         {

@@ -1,6 +1,6 @@
 ﻿namespace eShop.AdminUI.Services.Generic
 {
-    public interface IGenericApiClient
+    public interface IApiClient
     {
         Task<TResponse> GetAsync<TResponse>(string api, string path);
         Task<TResponse> PostAsync<TData, TResponse>(string api, string path, TData request);

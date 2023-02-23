@@ -1,5 +1,6 @@
 ﻿using eShop.AdminUI.Services.Constants;
 using eShop.AdminUI.Services.Generic;
+using eShop.AdminUI.Services.IdentityApi;
 using eShop.AdminUI.Services.ProductApi;
 
 namespace eShop.AdminUI.Container
@@ -8,7 +9,7 @@ namespace eShop.AdminUI.Container
     {
         public static void RegisterHttpClients(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddScoped<IGenericApiClient, GenericApiClient>();
+            serviceCollection.AddScoped<IApiClient, ApiClient>();
 
             serviceCollection
                 .AddScoped<IProductApiClient, ProductApiClient>()
@@ -17,6 +18,12 @@ namespace eShop.AdminUI.Container
                         httpClient.BaseAddress = new Uri(configuration.GetServicesSection(ApiClients.ProductApiKey));
                     });
 
+            serviceCollection
+                .AddScoped<IIdentityApiClient, IdentityApiClient>()
+                .AddHttpClient(ApiClients.IdentityApiKey, httpClient =>
+                {
+                    httpClient.BaseAddress = new Uri(configuration.GetServicesSection(ApiClients.IdentityApiKey));
+                });
         }
 
         private static string GetServicesSection(this IConfiguration configuration, string key)

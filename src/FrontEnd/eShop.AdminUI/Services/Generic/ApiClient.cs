@@ -4,11 +4,11 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace eShop.AdminUI.Services.Generic
 {
-    public class GenericApiClient : IGenericApiClient
+    public class ApiClient : IApiClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public GenericApiClient(IHttpClientFactory httpClientFactory)
+        public ApiClient(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }

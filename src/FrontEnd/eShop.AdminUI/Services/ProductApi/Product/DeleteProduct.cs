@@ -2,7 +2,7 @@
 {
     public partial class ProductApiClient
     {
-        public async Task<DeleteProductResponse> DeleteProduct(DeleteProductRequest request) => await _genericApiClient.DeleteAsync<DeleteProductRequest, DeleteProductResponse>(ApiKey, "api/Product/Delete", request);
+        public async Task<DeleteProductResponse> DeleteProduct(DeleteProductRequest request) => await _genericApiClient.DeleteAsync<DeleteProductRequest, DeleteProductResponse>(ApiKey, "/api/Product/Delete", request);
 
         public class DeleteProductRequest
         {

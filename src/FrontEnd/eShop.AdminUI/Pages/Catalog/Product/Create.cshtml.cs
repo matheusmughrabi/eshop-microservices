@@ -1,4 +1,5 @@
 using eShop.AdminUI.Services.ProductApi;
+using eShop.AdminUI.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -16,6 +17,7 @@ namespace eShop.AdminUI.Pages.Catalog.Product
         [BindProperty]
         public CreateProductViewModel CreateProductViewModel { get; set; } = new CreateProductViewModel();
 
+        [AuthorizePageHandler]
         public async Task<IActionResult> OnGetAsync(Guid categoryId)
         {
             CreateProductViewModel.CategoryId = categoryId;

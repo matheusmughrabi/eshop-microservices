@@ -1,4 +1,5 @@
-﻿using eShop.IdentityApi.Models.RegisterUser;
+﻿using eShop.IdentityApi.Models;
+using eShop.IdentityApi.Models.RegisterUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using System.Security.Claims;
 
 namespace eShop.IdentityApi.Controllers;
 
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -15,13 +17,14 @@ public class UserController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpPost("User/Register")]
+    [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserRequest request)
     {
         var identityUser = new IdentityUser()
         {
             UserName = request.Username,
-            Email = request.Email
+            Email = request.Email,
+            EmailConfirmed = true
         };
 
         var createUserResult = await _userManager.CreateAsync(identityUser, request.Password);
@@ -32,8 +35,8 @@ public class UserController : ControllerBase
         return BadRequest(createUserResult.Errors);
     }
 
+    [HttpGet("GetClaims")]
     [Authorize]
-    [HttpGet("User/GetClaims")]
     public async Task<IActionResult> GetAllClaims()
     {
         var user = await _userManager.FindByIdAsync(User.Identity.Name);
@@ -48,6 +51,24 @@ public class UserController : ControllerBase
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        return Ok(claims);
+        return Ok(claims.Select(p => new {Type = p.Type, Value = p.Value}));
+    }
+
+    [HttpPost("AddClaims")]
+    public async Task<IActionResult> AddClaims([FromBody] AddClaimsRequest request)
+    {
+        if (request.Claims is null || request.Claims.Count() == 0)
+            return BadRequest("At least 1 claim must be provided");
+
+        var user = await _userManager.FindByNameAsync(request.Username);
+        if (user is null)
+            return NotFound();
+
+        var claims = request.Claims.Select(p => new Claim(p.Type, p.Value));
+        var result = await _userManager.AddClaimsAsync(user, claims);
+        if (result.Succeeded)
+            return NoContent();
+
+        return Problem(result.Errors.ToString());
     }
 }

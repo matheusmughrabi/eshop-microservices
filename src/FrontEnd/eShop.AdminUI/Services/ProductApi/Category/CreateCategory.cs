@@ -2,7 +2,7 @@
 {
     public partial class ProductApiClient
     {
-        public async Task<CreateCategoryResponse> CreateCategory(CreateCategoryRequest request) => await _genericApiClient.PostAsync<CreateCategoryRequest, CreateCategoryResponse>(ApiKey, "api/Category/Create", request);
+        public async Task<CreateCategoryResponse> CreateCategory(CreateCategoryRequest request) => await _genericApiClient.PostAsync<CreateCategoryRequest, CreateCategoryResponse>(ApiKey, "/api/Category/Create", request);
 
         public class CreateCategoryRequest
         {

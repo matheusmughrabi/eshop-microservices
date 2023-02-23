@@ -2,7 +2,7 @@
 {
     public partial class ProductApiClient
     {
-        public async Task<GetProductByIdResponse> GetProductById(Guid id) => await _genericApiClient.GetAsync<GetProductByIdResponse>(ApiKey, $"api/Product/{id}");
+        public async Task<GetProductByIdResponse> GetProductById(Guid id) => await _genericApiClient.GetAsync<GetProductByIdResponse>(ApiKey, $"/api/Product/{id}");
 
         public class GetProductByIdResponse
         {

@@ -4,7 +4,7 @@ namespace eShop.AdminUI.Services.ProductApi
 {
     public partial class ProductApiClient
     {
-        public async Task<GetCategoriesPaginatedResponse> GetCategoriesPaginated(int page, int itemsPerPage) => await _genericApiClient.GetAsync<GetCategoriesPaginatedResponse>(ApiKey, $"api/Category/GetPaginated?page={page}&itemsPerPage={itemsPerPage}");
+        public async Task<GetCategoriesPaginatedResponse> GetCategoriesPaginated(int page, int itemsPerPage) => await _genericApiClient.GetAsync<GetCategoriesPaginatedResponse>(ApiKey, $"/api/Category/GetPaginated?page={page}&itemsPerPage={itemsPerPage}");
 
         public class GetCategoriesPaginatedResponse
         {
