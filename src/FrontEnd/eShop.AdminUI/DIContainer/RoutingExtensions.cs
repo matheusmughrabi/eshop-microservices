@@ -4,7 +4,10 @@
     {
         public static void AddCustomRouting(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddRazorPages().AddRazorPagesOptions(options =>
+            serviceCollection.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizeFolder("/Catalog", "Catalog_Admin");
+            }).AddRazorPagesOptions(options =>
             {
                 options.Conventions.AddPageRoute("/Catalog/Category/Index", "");
             });

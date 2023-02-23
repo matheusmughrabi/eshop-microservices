@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCustomRouting();
 builder.Services.RegisterHttpClients(builder.Configuration);
 builder.Services.RegisterAuthentication();
+builder.Services.RegisterAuthorization();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 

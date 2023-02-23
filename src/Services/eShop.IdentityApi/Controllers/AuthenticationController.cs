@@ -31,7 +31,8 @@ public class AuthenticationController : ControllerBase
 
         var user = await _userManager.FindByNameAsync(request.Username);
 
-        var claims = new List<Claim>() { new Claim(ClaimTypes.Name, user.Id.ToString()) };
+        var claims = await _userManager.GetClaimsAsync(user);
+        claims.Add(new Claim(ClaimTypes.Name, user.Id.ToString()));
 
         var secretEncoded = Encoding.UTF8.GetBytes(TokenConstants.Secret);
         var securityKey = new SymmetricSecurityKey(secretEncoded);

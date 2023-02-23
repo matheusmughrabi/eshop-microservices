@@ -1,101 +1,119 @@
-﻿using System.Text;
+﻿using eShop.AdminUI.Services.Extensions;
+using System.Text;
 using System.Text.Json;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace eShop.AdminUI.Services.Generic
+namespace eShop.AdminUI.Services.Generic;
+
+public class ApiClient : IApiClient
 {
-    public class ApiClient : IApiClient
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public ApiClient(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        _httpClientFactory = httpClientFactory;
+        _httpContextAccessor = httpContextAccessor;
+    }
 
-        public ApiClient(IHttpClientFactory httpClientFactory)
+    public async Task<TResponse> GetAsync<TResponse>(string api, string path)
+    {
+        var httpClient = _httpClientFactory.CreateClient(api);
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
+
+        if (!string.IsNullOrEmpty(token))
+            httpClient.AddAccessToken(token);
+
+        var httpResponseMessage = await httpClient.GetAsync(path);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
         {
-            _httpClientFactory = httpClientFactory;
-        }
+            PropertyNameCaseInsensitive = true
+        };
 
-        public async Task<TResponse> GetAsync<TResponse>(string api, string path)
+        return JsonSerializer.Deserialize<TResponse>(response, options);
+    }
+
+    public async Task<TResponse> PostAsync<TData, TResponse>(string api, string path, TData request)
+    {
+        var httpClient = _httpClientFactory.CreateClient(api);
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
+
+        if (!string.IsNullOrEmpty(token))
+            httpClient.AddAccessToken(token);
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            Application.Json);
+
+        var httpResponseMessage = await httpClient.PostAsync(path, content);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
         {
-            var httpClient = _httpClientFactory.CreateClient(api);
+            PropertyNameCaseInsensitive = true
+        };
 
-            var httpResponseMessage = await httpClient.GetAsync(path);
-            httpResponseMessage.EnsureSuccessStatusCode();
+        return JsonSerializer.Deserialize<TResponse>(response, options);
+    }
 
-            var response = await httpResponseMessage.Content.ReadAsStringAsync();
+    public async Task<TResponse> PutAsync<TData, TResponse>(string api, string path, TData request)
+    {
+        var httpClient = _httpClientFactory.CreateClient(api);
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+        if (!string.IsNullOrEmpty(token))
+            httpClient.AddAccessToken(token);
 
-            return JsonSerializer.Deserialize<TResponse>(response, options);
-        }
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            Application.Json);
 
-        public async Task<TResponse> PostAsync<TData, TResponse>(string api, string path, TData request)
+        var httpResponseMessage = await httpClient.PutAsync(path, content);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
         {
-            var httpClient = _httpClientFactory.CreateClient(api);
+            PropertyNameCaseInsensitive = true
+        };
 
-            var content = new StringContent(
-                JsonSerializer.Serialize(request),
-                Encoding.UTF8,
-                Application.Json);
+        return JsonSerializer.Deserialize<TResponse>(response, options);
+    }
 
-            var httpResponseMessage = await httpClient.PostAsync(path, content);
-            httpResponseMessage.EnsureSuccessStatusCode();
+    public async Task<TResponse> DeleteAsync<TData, TResponse>(string api, string path, TData request)
+    {
+        var httpClient = _httpClientFactory.CreateClient(api);
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
 
-            var response = await httpResponseMessage.Content.ReadAsStringAsync();
+        if (!string.IsNullOrEmpty(token))
+            httpClient.AddAccessToken(token);
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            return JsonSerializer.Deserialize<TResponse>(response, options);
-        }
-
-        public async Task<TResponse> PutAsync<TData, TResponse>(string api, string path, TData request)
+        var requestMessage = new HttpRequestMessage
         {
-            var httpClient = _httpClientFactory.CreateClient(api);
+            Method = HttpMethod.Delete,
+            Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"),
+            RequestUri = new Uri($"{httpClient.BaseAddress}{path}"),
+        };
 
-            var content = new StringContent(
-                JsonSerializer.Serialize(request),
-                Encoding.UTF8,
-                Application.Json);
+        var httpResponseMessage = await httpClient.SendAsync(requestMessage);
+        httpResponseMessage.EnsureSuccessStatusCode();
 
-            var httpResponseMessage = await httpClient.PutAsync(path, content);
-            httpResponseMessage.EnsureSuccessStatusCode();
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
 
-            var response = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            return JsonSerializer.Deserialize<TResponse>(response, options);
-        }
-
-        public async Task<TResponse> DeleteAsync<TData, TResponse>(string api, string path, TData request)
+        var options = new JsonSerializerOptions
         {
-            var httpClient = _httpClientFactory.CreateClient(api);
+            PropertyNameCaseInsensitive = true
+        };
 
-            var requestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Delete,
-                Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"),
-                RequestUri = new Uri($"{httpClient.BaseAddress}{path}"),
-            };
-
-            var httpResponseMessage = await httpClient.SendAsync(requestMessage);
-            httpResponseMessage.EnsureSuccessStatusCode();
-
-            var response = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            return JsonSerializer.Deserialize<TResponse>(response, options);
-        }
+        return JsonSerializer.Deserialize<TResponse>(response, options);
     }
 }

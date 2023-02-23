@@ -3,6 +3,7 @@ using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace eShop.ProductApi.Features.Product
     public partial class ProductController
     {
         [HttpPost("Create")]
+        [Authorize(Policy = "Product_Create")]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand request) => Ok(await _mediator.Send(request));
     }
     public class CreateProductCommand : IRequest<CreateProductCommandResponse>
