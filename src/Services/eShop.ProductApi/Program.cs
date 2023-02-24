@@ -38,7 +38,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 }); builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.RegisterAuthentication();
+builder.Services.RegisterAuthentication(builder.Configuration);
 builder.Services.RegisterAuthorization();
 
 builder.Services.AddDbContext<ProductDbContext>(options => options

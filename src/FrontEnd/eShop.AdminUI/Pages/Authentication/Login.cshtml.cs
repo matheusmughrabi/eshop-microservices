@@ -30,7 +30,7 @@ public class LoginModel : PageModel
 
         Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
 
-        return RedirectToPage("/Catalog/Product/Create");
+        return RedirectToPage("/Catalog/Category/Index");
     }
 }
 

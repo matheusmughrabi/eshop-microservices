@@ -1,4 +1,4 @@
-﻿using eShop.AdminUI.Constants;
+﻿using eShop.AdminUI.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -7,15 +7,21 @@ namespace eShop.AdminUI.DIContainer;
 
 public static class AuthenticationExtensions
 {
-    public static void RegisterAuthentication(this IServiceCollection services)
+    public static void RegisterAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
+        var tokenConfiguration = new TokenConfiguration();
+        configuration.Bind(nameof(TokenConfiguration), tokenConfiguration);
+        services.AddSingleton(tokenConfiguration);
+
         var tokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = false,
+            ValidIssuer = tokenConfiguration.Issuer,
+
             ValidateAudience = false,
 
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TokenConstants.Secret)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfiguration.Secret)),
 
             RequireExpirationTime = true,
             ValidateLifetime = true,

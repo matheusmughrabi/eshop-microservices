@@ -1,4 +1,4 @@
-﻿using eShop.IdentityApi.Constants;
+﻿using eShop.IdentityApi.Configuration;
 using eShop.IdentityApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,13 @@ public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signManager;
+    private readonly TokenConfiguration _tokenConfiguration;
 
-    public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signManager)
+    public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signManager, TokenConfiguration tokenConfiguration)
     {
         _userManager = userManager;
         _signManager = signManager;
+        _tokenConfiguration = tokenConfiguration;
     }
 
     [HttpPost("GetAccessToken")]
@@ -34,13 +36,13 @@ public class AuthenticationController : ControllerBase
         var claims = await _userManager.GetClaimsAsync(user);
         claims.Add(new Claim(ClaimTypes.Name, user.Id.ToString()));
 
-        var secretEncoded = Encoding.UTF8.GetBytes(TokenConstants.Secret);
+        var secretEncoded = Encoding.UTF8.GetBytes(_tokenConfiguration.Secret);
         var securityKey = new SymmetricSecurityKey(secretEncoded);
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            TokenConstants.Issuer,
-            TokenConstants.Audience,
+            _tokenConfiguration.Issuer,
+            _tokenConfiguration.Audience,
             claims,
             notBefore: DateTime.UtcNow,
             expires: DateTime.UtcNow.AddMinutes(30),

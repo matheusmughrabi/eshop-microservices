@@ -1,4 +1,4 @@
-using eShop.IdentityApi.Constants;
+using eShop.IdentityApi.Configuration;
 using eShop.IdentityApi.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -53,16 +53,20 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(config =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+var tokenConfiguration = new TokenConfiguration();
+builder.Configuration.Bind(nameof(TokenConfiguration), tokenConfiguration);
+builder.Services.AddSingleton(tokenConfiguration);
+
 var tokenValidationParameters = new TokenValidationParameters()
 {
     ValidateIssuer = true,
-    ValidIssuer = TokenConstants.Issuer,
+    ValidIssuer = tokenConfiguration.Issuer,
 
     ValidateAudience = true,
-    ValidAudience = TokenConstants.Audience,
+    ValidAudience = tokenConfiguration.Audience,
 
     ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TokenConstants.Secret)),
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfiguration.Secret)),
 
     RequireExpirationTime = true,
     ValidateLifetime = true,
