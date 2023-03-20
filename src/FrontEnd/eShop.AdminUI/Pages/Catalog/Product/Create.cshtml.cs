@@ -37,18 +37,29 @@ public class CreateProductViewModel
     public string Name { get; set; }
     public string? Description { get; set; }
     public decimal Price { get; set; }
+    public IFormFile Image { get; set; }
 }
 
 public static class CreateProductViewModelMaper
 {
     public static ProductApiClient.CreateProductRequest MapToCreateProductRequest(this CreateProductViewModel source)
     {
+        byte[] bytesImage;
+        using (var memoryStream = new MemoryStream())
+        {
+            source.Image.CopyTo(memoryStream);
+            bytesImage = memoryStream.ToArray();
+        }
+
+        string base64Image = Convert.ToBase64String(bytesImage);
+
         return new ProductApiClient.CreateProductRequest()
         {
             CategoryId = source.CategoryId,
             Name = source.Name,
             Description = source.Description,
-            Price = source.Price
+            Price = source.Price,
+            Base64Image = base64Image
         };
     }
 }

@@ -6,7 +6,7 @@ namespace eShop.ProductApi.Entity
     {
         protected ProductEntity() { }
 
-        public ProductEntity(string name, decimal price, string? description = null)
+        public ProductEntity(string name, decimal price, string? description = null, string? imagePath = null)
         {
             GuardAgainstNullName(name);
             GuardAgainstPriceEqualOrLowerThanZero(price);
@@ -14,11 +14,13 @@ namespace eShop.ProductApi.Entity
             Name = name;
             Description = description;
             Price = price;
+            ImagePath = imagePath;
         }
 
         public string Name { get; private set; }
         public string? Description { get; private set; }
         public decimal Price { get; private set; }
+        public string? ImagePath { get; set; }
         public Guid? CategoryId { get; private set; }
         public CategoryEntity? Category { get; }
 

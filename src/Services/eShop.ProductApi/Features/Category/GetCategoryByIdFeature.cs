@@ -36,6 +36,7 @@ namespace eShop.ProductApi.Features.Category
             public string Name { get; set; }
             public string Description { get; set; }
             public decimal Price { get; set; }
+            public string ImagePath { get; set; }
         }
     }
 
@@ -68,7 +69,8 @@ namespace eShop.ProductApi.Features.Category
                         Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
-                        Price = p.Price
+                        Price = p.Price,
+                        ImagePath = p.ImagePath
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();

@@ -26,13 +26,33 @@
                 @foreach (var product in Model.CategoryDetailsViewModel.Products)
                 {
                     <div id="product-div-@product.Id" class="list-group-item list-group-item-action">
-                        <a class="text-decoration-none text-dark" asp-page="/Catalog/Product/Update" asp-route-id="@product.Id">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">@product.Name</h5>
-                                <h6>@product.Price.ToString("C", CultureInfo.CurrentCulture)</h6>
+
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <h4 class="mb-1 text-center">@product.Name</h4>
+                                <img src="@product.ImagePath" class="rounded float-start" style="width: 8rem;"/>
                             </div>
-                            <p class="mb-1">@product.Description</p>
-                        </a>
+                            <div class="flex-grow-1 ms-3 align-self-center">
+                                <p class="mb-1">@product.Description</p>   
+                            </div>
+                            <div class="flex-shrink-0">
+                                <h4>@product.Price.ToString("C", CultureInfo.CurrentCulture)</h4>
+                            </div>
+                        </div>
+
+
+                       @* <a class="text-decoration-none text-dark" asp-page="/Catalog/Product/Update" asp-route-id="@product.Id">
+                            <div class="d-flex w-100 justify-content-between">
+                                <div>
+                                    <img src="@product.ImagePath" class="rounded float-start" style="width: 8rem;"/>
+                                    <h5 class="mb-1">@product.Name</h5>
+                                    <p class="mb-1">@product.Description</p>    
+                                </div>
+                                <div>
+                                    <h6>@product.Price.ToString("C", CultureInfo.CurrentCulture)</h6>
+                                </div>
+                            </div>
+                        </a>*@
 
                         <div class="float-end">
                             <button class="btn btn-primary move-product-by-id-button" id="move-product-by-id-button-@product.Id" productId="@product.Id" data-bs-toggle="modal" data-bs-target="#move-product-by-id-modal"><i class="bi bi-arrow-up-right-square"></i> Move</button>

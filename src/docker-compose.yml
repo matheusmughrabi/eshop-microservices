@@ -9,6 +9,18 @@ services:
     volumes:
       - mysql-data:/data/db
 
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    networks: 
+      - storage-azure
+    ports:
+      - 10000:10000
+      - 10001:10001
+
+networks: 
+  storage-azure:
+    driver: bridge
+
 volumes:
   mysql-data:
     driver: local

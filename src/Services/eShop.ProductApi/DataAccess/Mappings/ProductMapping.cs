@@ -17,11 +17,14 @@ namespace eShop.ProductApi.DataAccess.Mappings
                     .HasColumnType("nvarchar(100)");
 
             builder.Property(c => c.Description)
-                    .HasColumnType("nvarchar(500)");
+                    .HasColumnType("longtext");
 
             builder.Property(c => c.Price)
                 .IsRequired()
                 .HasColumnType("decimal(19,5)");
+
+            builder.Property(c => c.ImagePath)
+                   .HasColumnType("nvarchar(200)");
         }
     }
 }

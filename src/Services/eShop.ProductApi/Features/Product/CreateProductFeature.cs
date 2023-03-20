@@ -1,6 +1,7 @@
 ﻿using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.Entity;
 using eShop.ProductApi.Notifications;
+using eShop.ProductApi.Services.Blob;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ namespace eShop.ProductApi.Features.Product
     public partial class ProductController
     {
         [HttpPost("Create")]
-        [Authorize(Policy = "Product_Create")]
+        //[Authorize(Policy = "Product_Create")]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand request) => Ok(await _mediator.Send(request));
     }
     public class CreateProductCommand : IRequest<CreateProductCommandResponse>
@@ -29,6 +30,7 @@ namespace eShop.ProductApi.Features.Product
         public string Name { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
+        public string? Base64Image { get; set; }
     }
 
     public class CreateProductValidator : AbstractValidator<CreateProductCommand>
@@ -51,6 +53,14 @@ namespace eShop.ProductApi.Features.Product
                 .GreaterThan(0)
                 .WithMessage("'Price' must be greater than zero.")
                 .WithSeverity(Severity.Warning);
+
+            RuleFor(x => x.Base64Image).Custom((base64Image, context) => {
+                Span<byte> buffer = new Span<byte>(new byte[base64Image.Length]);
+                var isValidBase64 = Convert.TryFromBase64String(base64Image, buffer, out int bytesParsed);
+
+                if (!isValidBase64)
+                    context.AddFailure("Invalid image");
+            });
         }
     }
 
@@ -64,10 +74,12 @@ namespace eShop.ProductApi.Features.Product
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, CreateProductCommandResponse>
     {
         private readonly ProductDbContext _productDbContext;
+        private readonly IBlobService _blobService;
 
-        public CreateProductCommandHandler(ProductDbContext productDbContext)
+        public CreateProductCommandHandler(ProductDbContext productDbContext, IBlobService blobService)
         {
             _productDbContext = productDbContext;
+            _blobService = blobService;
         }
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -112,7 +124,9 @@ namespace eShop.ProductApi.Features.Product
                     }
                 };
 
-            categoryFromDb.Products.Add(new ProductEntity(request.Name, request.Price, request.Description));
+            var imagePath = await _blobService.UploadFile(request.Base64Image, "products");
+
+            categoryFromDb.Products.Add(new ProductEntity(request.Name, request.Price, request.Description, imagePath));
             await _productDbContext.SaveChangesAsync();
 
             return new CreateProductCommandResponse()

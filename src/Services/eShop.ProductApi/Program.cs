@@ -1,5 +1,8 @@
+using Azure.Storage.Blobs;
+using eShop.ProductApi.Configurations;
 using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.DIContainer;
+using eShop.ProductApi.Services.Blob;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -44,8 +47,13 @@ builder.Services.RegisterAuthorization();
 builder.Services.AddDbContext<ProductDbContext>(options => options
     .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 31))));
 
+builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration.GetConnectionString("AzureStorageConnectionString")));
+
+builder.Services.AddScoped<IBlobService, BlobService>();
+
 var app = builder.Build();
 
+app.CreateBlobContainers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -52,12 +52,6 @@ namespace eShop.AdminUI.Pages.Catalog.Category
         }
     }
 
-    public class CategoryViewModel
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-    }
-
     public class CategoryDetailsViewModel
     {
         public Guid Id { get; set; }
@@ -72,6 +66,7 @@ namespace eShop.AdminUI.Pages.Catalog.Category
             public string Name { get; set; }
             public string Description { get; set; }
             public decimal Price { get; set; }
+            public string ImagePath { get; set; }
         }
     }
 
@@ -85,7 +80,8 @@ namespace eShop.AdminUI.Pages.Catalog.Category
                         Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
-                        Price = p.Price
+                        Price = p.Price,
+                        ImagePath = p.ImagePath
                     }).ToList();
 
             return new CategoryDetailsViewModel()
