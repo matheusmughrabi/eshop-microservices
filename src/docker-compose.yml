@@ -17,6 +17,12 @@ services:
       - 10000:10000
       - 10001:10001
 
+  cache:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+
 networks: 
   storage-azure:
     driver: bridge

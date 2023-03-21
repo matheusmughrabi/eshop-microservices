@@ -1,19 +1,13 @@
-using Azure.Storage.Blobs;
-using eShop.ProductApi.Configurations;
-using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.DIContainer;
-using eShop.ProductApi.Services.Blob;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using eShop.BasketApi.DIContainer;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
-
-// Dependency injection container
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.RegisterAuthentication(builder.Configuration);
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -40,23 +34,16 @@ builder.Services.AddSwaggerGen(options =>
             new string[]{}
         }
     });
-}); 
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.RegisterAuthentication(builder.Configuration);
-builder.Services.RegisterAuthorization();
+});
 
-builder.Services.AddDbContext<ProductDbContext>(options => options
-    .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 31))));
-
-builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration.GetConnectionString("AzureStorageConnectionString")));
-
-builder.Services.AddScoped<IBlobService, BlobService>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "eShop_";
+});
 
 var app = builder.Build();
 
-app.CreateBlobContainers();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

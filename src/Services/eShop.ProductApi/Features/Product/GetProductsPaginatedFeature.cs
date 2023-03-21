@@ -1,5 +1,6 @@
 ﻿using eShop.ProductApi.DataAccess;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,14 +8,14 @@ namespace eShop.ProductApi.Features.Product
 {
     public partial class ProductController
     {
-        [HttpGet("GetPaginated/{CategoryId}")]
+        [HttpGet("GetPaginated")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPaginated([FromQuery] GetProductsPaginatedQuery request) => Ok(await _mediator.Send(request));
     }
 
     public class GetProductsPaginatedQuery : IRequest<GetProductsPaginatedQueryResponse>
     {
-        [FromRoute]
-        public Guid CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
 
         [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue, ErrorMessage = "Page must be an integer equal or greater than 1")]
         public int Page { get; set; }
@@ -31,6 +32,7 @@ namespace eShop.ProductApi.Features.Product
             public string Name { get; set; }
             public string? Description { get; set; }
             public decimal Price { get; set; }
+            public string ImagePath { get; set; }
         }
     }
 
@@ -49,13 +51,15 @@ namespace eShop.ProductApi.Features.Product
 
             var products = await _productDbContext.Product
                 .AsNoTracking()
+                .Where(c => request.CategoryId == null || c.CategoryId == request.CategoryId)
                 .Skip(skip)
                 .Take(request.ItemsPerPage)
                 .Select(c => new GetProductsPaginatedQueryResponse.Product()
                 {
                     Name = c.Name,
                     Description = c.Description,
-                    Price = c.Price
+                    Price = c.Price,
+                    ImagePath = c.ImagePath
                 })
                 .ToListAsync();
 

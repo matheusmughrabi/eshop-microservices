@@ -1,17 +1,19 @@
-﻿@using eShop.WebUI.ViewModels.Products
+﻿@using System.Globalization
+@using eShop.WebUI.ViewModels.Products
 @model ProductsViewModel;
 
-<div class="row row-cols-1 row-cols-md-2 g-4">
-
+<div class="row ">
     @foreach (var product in Model.Products)
     {
-        <div class="col">
-            <div class="card">
-                <img src="..." class="card-img-top" alt="...">
+        <div class="col-sm-6 col-lg-3 mb-4">
+            <div class="card h-100 shadow" style="width: 20rem;">
+                <img src=@product.ImagePath class="card-img-top d-flex justify-content-center" style="width: 20rem; height: 18rem">
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text">@product.Description</p>
-                    <p class="card-text">@product.Price</p>
+                    <p class="card-text">@product.Price.ToString("C", CultureInfo.CurrentCulture)</p>
+                    <div class="row">
+                        <button class="btn-primary">Add to cart</button>
+                    </div>
                 </div>
             </div>
         </div>
