@@ -23,6 +23,14 @@ services:
     ports:
       - '6379:6379'
 
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: MongoDB2023!
+    ports:
+      - "27017:27017"
+
 networks: 
   storage-azure:
     driver: bridge
