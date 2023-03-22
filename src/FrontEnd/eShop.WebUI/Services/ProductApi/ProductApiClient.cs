@@ -1,4 +1,5 @@
-﻿using eShop.WebUI.Services.ProductApi.Requests;
+﻿using eShop.WebUI.Services.Extensions;
+using eShop.WebUI.Services.ProductApi.Requests;
 using System.Text.Json;
 
 namespace eShop.WebUI.Services.ProductApi;
@@ -6,10 +7,34 @@ namespace eShop.WebUI.Services.ProductApi;
 public class ProductApiClient : IProductApiClient
 {
     private readonly HttpClient _httpClient;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ProductApiClient(HttpClient httpClient)
+    public ProductApiClient(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
     {
         _httpClient = httpClient;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public async Task<GetProductByIdResponse> GetById(Guid id)
+    {
+        var route = $"/api/Product/{id}";
+
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
+
+        if (!string.IsNullOrEmpty(token))
+            _httpClient.AddAccessToken(token);
+
+        var httpResponseMessage = await _httpClient.GetAsync(route);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<GetProductByIdResponse>(response, options);
     }
 
     public async Task<GetProductsPaginatedResponse> GetProductsPaginated(int page, int itemsPerPage, Guid? categoryId = null)

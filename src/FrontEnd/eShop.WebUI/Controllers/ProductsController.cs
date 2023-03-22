@@ -48,12 +48,14 @@ public class ProductsController : Controller
             });
         }
 
+        var product = await _productApiClient.GetById(addToCartViewModel.Id);
+
         var request = new AddToBasketRequest()
         {
             Id = addToCartViewModel.Id,
-            Name = addToCartViewModel.Name,
-            ImagePath = addToCartViewModel.ImagePath,
-            Price = addToCartViewModel.Price,
+            Name = product.Name,
+            Price = product.Price,
+            ImagePath = product.ImagePath,
             Quantity = 1
         };
 

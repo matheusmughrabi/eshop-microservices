@@ -10,7 +10,6 @@ public class PlaceOrderCommand : IRequest<PlaceOrderCommandResponse>
     public class Product
     {
         public string Id { get; set; }
-        public decimal PriceAtTimeOfOrder { get; set; }
         public int Quantity { get; set; }
     }
 }

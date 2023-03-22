@@ -13,10 +13,7 @@ public class PlaceOrderCommandValidator : ICommandValidator<PlaceOrderCommand, P
 
         if (command.Products is null || command.Products.Count == 0)
             validationResult.AddValidation("Products", "Order must have at least one product");
-
-        if(command.Products.Any(c => c.PriceAtTimeOfOrder <=0))
-            validationResult.AddValidation("PriceAtTimeOfOrder", "All products must have a PriceAtTimeOfOrder greater than zero");
-
+        
         if (command.Products.Any(c => c.Quantity <= 0))
             validationResult.AddValidation("Quantity", "All products must have a Quantity greater than zero");
 
