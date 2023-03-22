@@ -25,15 +25,13 @@ public class AuthenticationController : Controller
     [HttpPost]
     public async Task<IActionResult> Login([FromForm] LoginViewModel request)
     {
-        var token = await _identityApiClient.GetAccessToken(new Services.Identity.Requests.GetAccessTokenRequest() { Username = request.Username, Password = request.Password });
+        var response = await _identityApiClient.GetAccessToken(new Services.Identity.Requests.GetAccessTokenRequest() 
+        { 
+            Username = request.Username, 
+            Password = request.Password 
+        });
 
-        var claims = new JwtSecurityTokenHandler().ReadJwtToken(token.Token).Claims;
-
-        var claimsIdentity = new ClaimsIdentity(claims);
-
-        var userPrincipal = new ClaimsPrincipal(new[] { claimsIdentity });
-
-        await HttpContext.SignInAsync(userPrincipal);
+        Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
 
         return RedirectToAction("Index", "Products");
     }

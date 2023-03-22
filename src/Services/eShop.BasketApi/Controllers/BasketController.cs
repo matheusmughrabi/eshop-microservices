@@ -32,6 +32,7 @@ public class BasketController : ControllerBase
     public async Task<IActionResult> AddItem([FromBody] BasketModel.Item item)
     {
         var recordId = $"Basket_{User.Identity.Name}";
+
         var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
 
         if (basket == null)
@@ -42,7 +43,7 @@ public class BasketController : ControllerBase
         // Using a long expiration time here to allow users to have access to their baskets for decent amount of time
         await _cache.SetRecordAsync(recordId, basket, TimeSpan.FromHours(2)); 
 
-        return Ok();
+        return Ok(new { RecordId = recordId });
     }
 
     [HttpPost("RemoveItem")]
@@ -54,11 +55,7 @@ public class BasketController : ControllerBase
         if (basket == null)
             return NotFound("Basket not found");
 
-        var itemToBeRemoved = basket.Items.FirstOrDefault(c => c.Id == request.ItemId);
-        if (itemToBeRemoved is null)
-            return NotFound("Item not found");
-
-        basket.Items.Remove(itemToBeRemoved);
+        basket.RemoveItem(request.ItemId);
 
         // I chose to remove the basket altogether from the cache if there are no more items left
         if (basket.Items.Count == 0)

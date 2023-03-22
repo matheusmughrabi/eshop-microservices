@@ -1,9 +1,11 @@
 ﻿using eShop.WebUI.Services.ProductApi;
 using eShop.WebUI.ViewModels.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.WebUI.Controllers;
 
+[Authorize]
 public class ProductsController : Controller
 {
     private readonly IProductApiClient _productApiClient;

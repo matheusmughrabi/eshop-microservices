@@ -1,5 +1,5 @@
-using eShop.WebUI.Services.Identity;
-using eShop.WebUI.Services.ProductApi;
+using eShop.WebUI.DIContainer;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,18 +7,10 @@ builder.Services.AddControllersWithViews().AddRazorPagesOptions(options =>
 {
     options.Conventions.AddPageRoute("/Products/Index", "");
 });
-builder.Services.AddAuthentication("X-WebUI-Cookie")
-    .AddCookie("X-WebUI-Cookie");
 
-builder.Services.AddHttpClient<IIdentityApiClient, IdentityApiClient>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["Services:IdentityApi"]);
-});
+builder.Services.RegisterAuthentication(builder.Configuration);
+builder.Services.RegisterApiClients(builder.Configuration);
 
-builder.Services.AddHttpClient<IProductApiClient, ProductApiClient>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["Services:ProductApi"]);
-});
 
 var app = builder.Build();
 
@@ -27,6 +19,16 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseStatusCodePages(async context => {
+    var request = context.HttpContext.Request;
+    var response = context.HttpContext.Response;
+
+    if (response.StatusCode == (int)HttpStatusCode.Unauthorized || response.StatusCode == (int)HttpStatusCode.Forbidden)
+    {
+        response.Redirect("/authentication/login");
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

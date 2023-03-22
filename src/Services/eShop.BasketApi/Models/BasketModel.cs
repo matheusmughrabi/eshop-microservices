@@ -25,6 +25,16 @@ public class BasketModel
         itemFromBasket.Quantity += item.Quantity;
     }
 
+    public void RemoveItem(Guid itemId)
+    {
+        var itemToBeRemoved = Items.FirstOrDefault(c => c.Id == itemId);
+        if (itemToBeRemoved is null)
+            throw new ArgumentException("Item not found");
+
+        Items.Remove(itemToBeRemoved);
+    }
+
+
     public void SubtractItemQuantity(Guid itemId)
     {
         var itemFromBasket = Items.FirstOrDefault(c => c.Id == itemId);
