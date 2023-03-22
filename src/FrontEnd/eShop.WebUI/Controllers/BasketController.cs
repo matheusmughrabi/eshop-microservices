@@ -33,4 +33,15 @@ public class BasketController : Controller
 
         return View(basketViewModel);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveItem(RemoveItemFromBasketViewModel request)
+    {
+        var success = await _basketApiClient.RemoveItem(new Services.BasketApi.Requests.RemoveItemFromBasketRequest()
+        {
+            ItemId = request.ItemId
+        });
+
+        return Json(new { success = success });
+    }
 }
