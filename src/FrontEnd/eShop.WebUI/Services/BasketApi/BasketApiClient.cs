@@ -17,6 +17,31 @@ public class BasketApiClient : IBasketApiClient
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public async Task<GetBasketResponse> GetBasket()
+    {
+        var route = "/api/Basket/GetBasket";
+
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
+
+        if (!string.IsNullOrEmpty(token))
+            _httpClient.AddAccessToken(token);
+
+        var httpResponseMessage = await _httpClient.GetAsync(route);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.NoContent)
+            return new GetBasketResponse() { Items = new List<GetBasketResponse.Item>() };
+
+        return JsonSerializer.Deserialize<GetBasketResponse>(response, options);
+    }
+
     public async Task<bool> AddToBasket(AddToBasketRequest request)
     {
         var content = new StringContent(

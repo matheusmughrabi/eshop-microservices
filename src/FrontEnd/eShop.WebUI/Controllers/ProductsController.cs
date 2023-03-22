@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eShop.WebUI.Controllers;
 
-[Authorize]
 public class ProductsController : Controller
 {
     private readonly IProductApiClient _productApiClient;
@@ -41,6 +40,14 @@ public class ProductsController : Controller
     [HttpPost]
     public async Task<IActionResult> AddToBasket(AddToBasketViewModel addToCartViewModel)
     {
+        if (User.Identity.IsAuthenticated == false)
+        {
+            return Json(new
+            {
+                Status = "401"
+            });
+        }
+
         var request = new AddToBasketRequest()
         {
             Id = addToCartViewModel.Id,

@@ -25,6 +25,9 @@ public class BasketController : ControllerBase
         var recordId = $"Basket_{User.Identity.Name}";
         var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
 
+        if (basket is null)
+            return NoContent();
+
         return Ok(basket);
     }
 

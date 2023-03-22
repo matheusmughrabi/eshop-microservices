@@ -17,9 +17,9 @@ public class AuthenticationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Login()
+    public async Task<IActionResult> Login(string returnUrl)
     {
-        return View();
+        return View(new LoginViewModel { ReturnUrl = returnUrl});
     }
 
     [HttpPost]
@@ -33,13 +33,16 @@ public class AuthenticationController : Controller
 
         Response.Cookies.Append("X-Access-Token", response.Token, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
 
+        if (!string.IsNullOrEmpty(request.ReturnUrl))
+            return Redirect(request.ReturnUrl);
+
         return RedirectToAction("Index", "Products");
     }
 
     [HttpGet]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync();
+        Response.Cookies.Delete("X-Access-Token");
         return RedirectToAction("Index", "Products");
     }
 }

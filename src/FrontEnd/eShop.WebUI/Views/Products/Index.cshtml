@@ -39,7 +39,11 @@
            },
            data: {Id : productId, Name : name, Price : price, ImagePath : imagePath},
            success: function( data, textStatus, jQxhr ){
-               if(data.success){
+
+               if(data.status === '401'){
+                   window.location.href = "/Authentication/Login?returnUrl=/Products/Index";
+               }
+               else if(data.success){
                    alert("Item added to basket");
                }
                else{

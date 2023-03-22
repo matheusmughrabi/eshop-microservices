@@ -1,0 +1,56 @@
+﻿@using System.Globalization
+@using eShop.WebUI.ViewModels.Basket
+@model BasketViewModel;
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Items.Count > 0)
+        {
+            <table id="basket-table" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" hidden>Id</th>
+                        <th scope="col">Image</th>
+                        <th scope="col" style="width: 20%">Name</th>
+                        <th scope="col" style="width: 20%">Quantity</th>
+                        <th scope="col" style="width: 20%">Price</th>
+                        <th scope="col" style="width: 20%">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr id="tr-@item.Id">
+                            <td scope="row" hidden>@item.Id</td>
+                            <td scope="row">
+                                <img src=@item.ImagePath style="width: 6rem; height: 6rem">
+                            </td>
+                            <td scope="row" class="align-middle">@item.Name</td>
+                            <td scope="row" class="align-middle">@item.Quantity</td>
+                            <td scope="row" class="align-middle">@item.Price.ToString("C", CultureInfo.CurrentCulture)</td>
+                            <td scope="row" class="align-middle">@item.TotalCost.ToString("C", CultureInfo.CurrentCulture)</td>
+                            <td scope="row" class="align-middle"></td>
+                        </tr>
+                    }
+                </tbody>
+
+                <tfoot>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td><span>@Model.CalculateTotalCost().ToString("C", CultureInfo.CurrentCulture)</span></td>
+                    </tr>
+                </tfoot>
+
+            </table>
+
+            <button class="btn-primary">End purchase</button>
+        }
+        else
+        {
+            <p>Your basket is empty</p>
+        }
+    </div>
+</div>
