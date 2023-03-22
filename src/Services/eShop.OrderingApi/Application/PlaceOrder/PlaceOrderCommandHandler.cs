@@ -43,7 +43,7 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Place
             Products = request.Products.Select(c => new OrderEntity.Product()
             {
                 Id = c.Id,
-                PriceAtTimeOfOrder = c.PriceAtTimeOfOrder,
+                PriceAtTimeOfOrder = c.PriceAtPurchase,
                 Quantity = c.Quantity
             }).ToList()
         };
