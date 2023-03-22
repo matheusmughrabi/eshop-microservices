@@ -1,4 +1,5 @@
-﻿using eShop.WebUI.Services.Identity;
+﻿using eShop.WebUI.Services.BasketApi;
+using eShop.WebUI.Services.Identity;
 using eShop.WebUI.Services.ProductApi;
 
 namespace eShop.WebUI.DIContainer;
@@ -15,6 +16,11 @@ public static class ServicesExtensions
         services.AddHttpClient<IProductApiClient, ProductApiClient>(client =>
         {
             client.BaseAddress = new Uri(configuration["Services:ProductApi"]);
+        });
+
+        services.AddHttpClient<IBasketApiClient, BasketApiClient>(client =>
+        {
+            client.BaseAddress = new Uri(configuration["Services:BasketApi"]);
         });
     }
 }

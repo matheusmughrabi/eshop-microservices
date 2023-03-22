@@ -10,6 +10,7 @@ builder.Services.AddControllersWithViews().AddRazorPagesOptions(options =>
 
 builder.Services.RegisterAuthentication(builder.Configuration);
 builder.Services.RegisterApiClients(builder.Configuration);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
 var app = builder.Build();

@@ -5,17 +5,52 @@
 <div class="row ">
     @foreach (var product in Model.Products)
     {
-        <div class="col-sm-6 col-lg-3 mb-4">
+        <div class="col-sm-6 col-lg-3 mb-4" id="@product.Id">
             <div class="card h-100 shadow" style="width: 20rem;">
-                <img src=@product.ImagePath class="card-img-top d-flex justify-content-center" style="width: 20rem; height: 18rem">
+                <img src=@product.ImagePath id="product-imagePath-@product.Id" class="card-img-top d-flex justify-content-center" style="width: 20rem; height: 18rem">
                 <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text">@product.Price.ToString("C", CultureInfo.CurrentCulture)</p>
+                    <h5 class="card-title" id="product-name-@product.Id">@product.Name</h5>
+                    <p class="card-text" id="product-price-@product.Id" value="@product.Price">@product.Price.ToString("C", CultureInfo.CurrentCulture)</p>
                     <div class="row">
-                        <button class="btn-primary">Add to cart</button>
+                        <button class="btn-primary add-to-basket-button" value="@product.Id">Add to basket</button>
                     </div>
                 </div>
             </div>
         </div>
     }
 </div>
+
+@section Scripts{
+<script>
+    $('.add-to-basket-button').click(function(){
+
+        let productId = $(this).attr("value");
+        let imagePath = $(`#product-imagePath-${productId}`).attr('src');
+        let name = $(`#product-name-${productId}`).text();
+        let price = $(`#product-price-${productId}`).attr('value');
+
+        $.ajax({
+           url: '/Products/AddToBasket',
+           type: 'POST',
+           contentType: 'application/x-www-form-urlencoded',
+           headers: {
+              RequestVerificationToken:
+                  $('input:hidden[name="__RequestVerificationToken"]').val()
+           },
+           data: {Id : productId, Name : name, Price : price, ImagePath : imagePath},
+           success: function( data, textStatus, jQxhr ){
+               if(data.success){
+                   alert("Item added to basket");
+               }
+               else{
+                   alert("Item was not added to basket");
+               }
+            },
+           error: function( jqXhr, textStatus, errorThrown ){
+                alert("error when trying to add to basket");
+            }
+        });
+    })
+
+</script>
+}

@@ -29,6 +29,7 @@ namespace eShop.ProductApi.Features.Product
 
         public class Product
         {
+            public Guid Id { get; set; }
             public string Name { get; set; }
             public string? Description { get; set; }
             public decimal Price { get; set; }
@@ -56,6 +57,7 @@ namespace eShop.ProductApi.Features.Product
                 .Take(request.ItemsPerPage)
                 .Select(c => new GetProductsPaginatedQueryResponse.Product()
                 {
+                    Id = c.Id,
                     Name = c.Name,
                     Description = c.Description,
                     Price = c.Price,

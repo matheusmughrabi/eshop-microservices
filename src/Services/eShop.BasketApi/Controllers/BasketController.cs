@@ -43,7 +43,7 @@ public class BasketController : ControllerBase
         // Using a long expiration time here to allow users to have access to their baskets for decent amount of time
         await _cache.SetRecordAsync(recordId, basket, TimeSpan.FromHours(2)); 
 
-        return Ok(new { RecordId = recordId });
+        return Ok();
     }
 
     [HttpPost("RemoveItem")]
