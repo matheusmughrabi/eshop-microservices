@@ -29,7 +29,7 @@ public class OrderApiClient : IOrderApiClient
         if (!string.IsNullOrEmpty(token))
             _httpClient.AddAccessToken(token);
 
-        var httpResponseMessage = await _httpClient.PostAsync("/api/Order/PlaceOrder", content);
+        var httpResponseMessage = await _httpClient.PostAsync("/Order/PlaceOrder", content);
 
         return httpResponseMessage.IsSuccessStatusCode;
     }

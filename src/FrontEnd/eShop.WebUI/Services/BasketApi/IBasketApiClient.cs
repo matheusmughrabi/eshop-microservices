@@ -7,4 +7,5 @@ public interface IBasketApiClient
     Task<GetBasketResponse> GetBasket();
     Task<bool> AddToBasket(AddToBasketRequest request);
     Task<bool> RemoveItem(RemoveItemFromBasketRequest request);
+    Task<bool> RemoveAllItems();
 }

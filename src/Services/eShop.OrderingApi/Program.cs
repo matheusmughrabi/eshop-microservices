@@ -1,4 +1,5 @@
 using eShop.OrderingApi.Application.PlaceOrder;
+using eShop.OrderingApi.DIContainer;
 using eShop.OrderingApi.Repository;
 using MediatR;
 using MongoDB.Driver;
@@ -6,15 +7,13 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<PlaceOrderCommandValidator>();
+builder.Services.RegisterAuthentication(builder.Configuration);
 
 builder.Services.AddScoped<IMongoClient>(c =>
 {
@@ -32,6 +31,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

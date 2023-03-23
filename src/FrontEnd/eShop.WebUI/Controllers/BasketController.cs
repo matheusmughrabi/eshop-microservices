@@ -1,5 +1,6 @@
 ﻿using eShop.WebUI.Services.BasketApi;
 using eShop.WebUI.Services.OrderApi;
+using eShop.WebUI.Services.OrderApi.Requests;
 using eShop.WebUI.ViewModels.Basket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,18 +52,24 @@ public class BasketController : Controller
     [HttpPost]
     public async Task<IActionResult> PlaceOrder()
     {
-        var success = await _orderApiClient.PlaceOrder(new Services.OrderApi.Requests.PlaceOrderRequest()
+        var basket = await _basketApiClient.GetBasket();
+        if (basket.Items.Count == 0)
+            return Json(new { success = false, messsage = "Cannot place order with an empty basket" });
+
+        var success = await _orderApiClient.PlaceOrder(new PlaceOrderRequest()
         {
-            Products = new List<Services.OrderApi.Requests.PlaceOrderRequest.Product>()
+            Products = basket.Items.Select(c => new PlaceOrderRequest.Product()
             {
-                new Services.OrderApi.Requests.PlaceOrderRequest.Product()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    PriceAtPurchase = 15M,
-                    Quantity = 2
-                }
-            }
+                Id = c.Id.ToString(),
+                PriceAtPurchase = c.Price,
+                Quantity = c.Quantity
+            }).ToList()
         });
+
+        if (!success)
+            return Json(new { success = false, messsage = "Order was not placed" });
+
+        await _basketApiClient.RemoveAllItems();
 
         return Json(new { success = success });
     }

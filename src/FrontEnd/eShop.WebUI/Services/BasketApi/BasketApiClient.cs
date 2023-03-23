@@ -75,4 +75,16 @@ public class BasketApiClient : IBasketApiClient
 
         return httpResponseMessage.IsSuccessStatusCode;
     }
+
+    public async Task<bool> RemoveAllItems()
+    {
+        var token = _httpContextAccessor.HttpContext.Request.Cookies["X-Access-Token"];
+
+        if (!string.IsNullOrEmpty(token))
+            _httpClient.AddAccessToken(token);
+
+        var httpResponseMessage = await _httpClient.PostAsync("/api/Basket/RemoveAllItems", null);
+
+        return httpResponseMessage.IsSuccessStatusCode;
+    }
 }
