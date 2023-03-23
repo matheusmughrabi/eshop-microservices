@@ -22,7 +22,7 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var response = await _productApiClient.GetProductsPaginated(1, 50);
+        var response = await _productApiClient.GetProducts();
 
         var products = response.Products.Select(c => new ProductsViewModel.Product()
         {

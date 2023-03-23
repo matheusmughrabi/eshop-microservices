@@ -37,6 +37,25 @@ public class ProductApiClient : IProductApiClient
         return JsonSerializer.Deserialize<GetProductByIdResponse>(response, options);
     }
 
+    public async Task<GetProductsResponse> GetProducts(Guid? categoryId = null)
+    {
+        var categoryIdQueryParam = new QueryParamModel() { Key = "CategoryId", Value = categoryId.ToString() };
+        var queryParamsString = GetQueryParams(categoryIdQueryParam);
+        var route = $"/api/Product/GetProducts" + queryParamsString;
+
+        var httpResponseMessage = await _httpClient.GetAsync(route);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<GetProductsResponse>(response, options);
+    }
+
     public async Task<GetProductsPaginatedResponse> GetProductsPaginated(int page, int itemsPerPage, Guid? categoryId = null)
     {
         var pageQueryParam = new QueryParamModel() { Key = "Page", Value = page.ToString() };
