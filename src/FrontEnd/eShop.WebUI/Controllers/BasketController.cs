@@ -61,6 +61,7 @@ public class BasketController : Controller
             Products = basket.Items.Select(c => new PlaceOrderRequest.Product()
             {
                 Id = c.Id.ToString(),
+                Name = c.Name,
                 PriceAtPurchase = c.Price,
                 Quantity = c.Quantity
             }).ToList()

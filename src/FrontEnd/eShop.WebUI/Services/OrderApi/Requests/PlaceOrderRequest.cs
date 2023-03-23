@@ -7,6 +7,7 @@ public class PlaceOrderRequest
     public class Product
     {
         public string Id { get; set; }
+        public string Name { get; set; }
         public decimal PriceAtPurchase { get; set; }
         public int Quantity { get; set; }
     }

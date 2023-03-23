@@ -99,8 +99,7 @@
                },
                success: function( data, textStatus, jQxhr ){
                    if(data.success){
-                       alert("Order was placed");
-                       window.location.reload();
+                       window.location.href = "/Order/OrderPlaced";
                    }
                    else{
                        alert("Order was not placed");

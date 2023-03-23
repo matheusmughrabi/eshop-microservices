@@ -1,3 +1,4 @@
+using eShop.OrderingApi.Application.GetOrders;
 using eShop.OrderingApi.Application.PlaceOrder;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,5 +26,18 @@ public class OrderController : ControllerBase
             return BadRequest(response.ValidationResult.Validations);
 
         return Ok();
+    }
+
+    [HttpGet("GetOrders")]
+    public async Task<IActionResult> GetOrders()
+    {
+        var command = new GetOrdersCommand()
+        {
+            UserId = User.Identity.Name
+        };
+
+        var response = await _mediator.Send(command);
+
+        return Ok(response);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace eShop.OrderingApi.Application.PlaceOrder;
 
-public class PlaceOrderCommandValidator : ICommandValidator<PlaceOrderCommand, PlaceOrderCommandResponse>
+public class PlaceOrderCommandValidator : ICommandValidator<PlaceOrderCommand, PlaceOrderCommandResult>
 {
     public ValidationResult Validate(PlaceOrderCommand command)
     {

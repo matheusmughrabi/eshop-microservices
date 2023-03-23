@@ -2,6 +2,7 @@ using eShop.OrderingApi.Application.PlaceOrder;
 using eShop.OrderingApi.DIContainer;
 using eShop.OrderingApi.Repository;
 using MediatR;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System.Reflection;
 
@@ -18,6 +19,34 @@ builder.Services.RegisterAuthentication(builder.Configuration);
 builder.Services.AddScoped<IMongoClient>(c =>
 {
     return new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
 });
 
 var app = builder.Build();

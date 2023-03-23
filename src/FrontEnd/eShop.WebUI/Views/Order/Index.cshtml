@@ -1,0 +1,32 @@
+﻿@using eShop.WebUI.ViewModels.Order
+@model OrderViewModel;
+
+@if (Model.Orders.Count > 0)
+{
+    @foreach (var order in Model.Orders)
+    {
+        <div class="row row-cols-1 g-4">
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">@order.DateOfPurchase</div>
+                    <div class="card-body">
+                        <h5 class="card-title">@order.StatusDescription</h5>
+
+                        @foreach (var product in order.Products)
+                        {
+                            <p class="card-text">@product.Quantity @product.Name</p>
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+}
+else
+{
+    <p>You haven't made any orders yet</p>
+}
+

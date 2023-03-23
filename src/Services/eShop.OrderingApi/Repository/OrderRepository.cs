@@ -1,4 +1,5 @@
 ﻿using eShop.OrderingApi.Entity;
+using eShop.OrderingApi.Repository.Models;
 using MongoDB.Driver;
 
 namespace eShop.OrderingApi.Repository;
@@ -21,9 +22,13 @@ public class OrderRepository : IOrderRepository
         throw new NotImplementedException();
     }
 
-    public Task<OrderEntity> GetByUserIdAsync(string userId)
+    public async Task<List<OrderEntity>> GetByUserIdAsync(string userId)
     {
-        throw new NotImplementedException();
+        var filter = Builders<OrderEntity>.Filter.Eq(c => c.UserId, userId);
+
+        var orders = await _orderCollection.Find(filter).ToListAsync();
+
+        return orders;
     }
 
     public async Task InsertAsync(OrderEntity entity)
