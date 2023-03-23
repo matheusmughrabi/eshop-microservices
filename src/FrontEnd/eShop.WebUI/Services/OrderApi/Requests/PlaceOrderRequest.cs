@@ -10,5 +10,6 @@ public class PlaceOrderRequest
         public string Name { get; set; }
         public decimal PriceAtPurchase { get; set; }
         public int Quantity { get; set; }
+        public string? ImagePath { get; set; }
     }
 }

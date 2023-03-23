@@ -32,7 +32,7 @@ public class OrderEntity
 
     public class Product
     {
-        public Product(string id, string name, decimal priceAtPurchase, int quantity)
+        public Product(string id, string name, decimal priceAtPurchase, int quantity, string? imagePath = null)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("id cannot be null or empty");
@@ -50,6 +50,7 @@ public class OrderEntity
             Name = name;
             PriceAtPurchase = priceAtPurchase;
             Quantity = quantity;
+            ImagePath = imagePath;
         }
 
         public string Id { get; private set; }
@@ -57,5 +58,6 @@ public class OrderEntity
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal PriceAtPurchase { get; private set; }
         public int Quantity { get; private set; }
+        public string? ImagePath { get; private set; }
     }
 }

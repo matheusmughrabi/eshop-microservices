@@ -39,7 +39,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
-    options.InstanceName = "eShop_";
+    options.InstanceName = "eShop_Basket";
 });
 
 var app = builder.Build();

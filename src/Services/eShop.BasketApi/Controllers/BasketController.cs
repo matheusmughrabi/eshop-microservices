@@ -22,7 +22,7 @@ public class BasketController : ControllerBase
     [HttpGet("GetBasket")]
     public async Task<IActionResult> GetBasket()
     {
-        var recordId = $"Basket_{User.Identity.Name}";
+        var recordId = $"{User.Identity.Name}";
         var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
 
         if (basket is null)
@@ -34,7 +34,7 @@ public class BasketController : ControllerBase
     [HttpPost("AddItem")]
     public async Task<IActionResult> AddItem([FromBody] BasketModel.Item item)
     {
-        var recordId = $"Basket_{User.Identity.Name}";
+        var recordId = $"{User.Identity.Name}";
 
         var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
 
@@ -52,7 +52,7 @@ public class BasketController : ControllerBase
     [HttpPost("RemoveItem")]
     public async Task<IActionResult> RemoveItem([FromBody] RemoveItemRequest request)
     {
-        var recordId = $"Basket_{User.Identity.Name}";
+        var recordId = $"{User.Identity.Name}";
         var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
 
         if (basket == null)
@@ -72,7 +72,7 @@ public class BasketController : ControllerBase
     [HttpPost("SubtractItemQuantity")]
     public async Task<IActionResult> SubtractItemQuantity([FromBody] SubtractItemQuantityRequest request)
     {
-        var recordId = $"Basket_{User.Identity.Name}";
+        var recordId = $"{User.Identity.Name}";
         var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
 
         if (basket == null)
@@ -92,7 +92,7 @@ public class BasketController : ControllerBase
     [HttpPost("RemoveAllItems")]
     public async Task<IActionResult> RemoveAllItems()
     {
-        var recordId = $"Basket_{User.Identity.Name}";
+        var recordId = $"{User.Identity.Name}";
         await _cache.RemoveAsync(recordId);
 
         return Ok();

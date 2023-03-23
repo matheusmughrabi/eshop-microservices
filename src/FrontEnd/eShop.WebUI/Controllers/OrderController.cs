@@ -37,7 +37,8 @@ public class OrderController : Controller
                     Id = p.Id,
                     Name = p.Name,
                     Quantity = p.Quantity,
-                    PriceAtPurchase = p.PriceAtPurchase
+                    PriceAtPurchase = p.PriceAtPurchase,
+                    ImagePath = p.ImagePath
                 }).ToList()
             }).ToList()
         };

@@ -30,7 +30,8 @@ public class GetOrdersCommandHandler : IRequestHandler<GetOrdersCommand, GetOrde
                     Id = p.Id,
                     Name = p.Name,
                     PriceAtPurchase = p.PriceAtPurchase,
-                    Quantity = p.Quantity
+                    Quantity = p.Quantity,
+                    ImagePath = p.ImagePath
                 }).ToList()
             }).ToList()
         };

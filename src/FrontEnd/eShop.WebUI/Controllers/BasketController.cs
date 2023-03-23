@@ -63,7 +63,8 @@ public class BasketController : Controller
                 Id = c.Id.ToString(),
                 Name = c.Name,
                 PriceAtPurchase = c.Price,
-                Quantity = c.Quantity
+                Quantity = c.Quantity,
+                ImagePath = c.ImagePath
             }).ToList()
         });
 

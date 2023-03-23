@@ -1,22 +1,33 @@
-﻿@using eShop.WebUI.ViewModels.Order
+﻿@using System.Globalization
+@using eShop.WebUI.ViewModels.Order
 @model OrderViewModel;
 
 @if (Model.Orders.Count > 0)
 {
     @foreach (var order in Model.Orders)
     {
-        <div class="row row-cols-1 g-4">
+        <div class="d-flex justify-content-center row mb-3">
 
-            <div class="col">
+            <div class="col-6">
                 <div class="card">
                     <div class="card-header">@order.DateOfPurchase</div>
                     <div class="card-body">
-                        <h5 class="card-title">@order.StatusDescription</h5>
+                        <h5 class="mb-3"><em>Order @order.StatusDescription</em></h5>
 
                         @foreach (var product in order.Products)
                         {
-                            <p class="card-text">@product.Quantity @product.Name</p>
+                            <div class="d-flex justify-content-between flex-row bd-highlight mb-3">
+                                <img src=@product.ImagePath style="width: 5rem; height: 5rem">
+                                <p class="card-text align-self-center">@product.Quantity @product.Name (at @product.PriceAtPurchase.ToString("C", CultureInfo.CurrentCulture) each)</p>
+                            </div>
                         }
+
+                        <hr>
+
+                        <div class="d-flex justify-content-end">
+                            <p>Total: @order.CalculateTotal().ToString("C", CultureInfo.CurrentCulture)</p>
+                        </div>
+                        
 
                     </div>
                 </div>

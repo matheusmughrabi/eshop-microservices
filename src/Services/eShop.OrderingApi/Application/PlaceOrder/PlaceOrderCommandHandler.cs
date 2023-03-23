@@ -40,7 +40,7 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Place
 
         foreach (var product in request.Products)
         {
-            orderEntity.AddProduct(new OrderEntity.Product(product.Id, product.Name, product.PriceAtPurchase, product.Quantity));
+            orderEntity.AddProduct(new OrderEntity.Product(product.Id, product.Name, product.PriceAtPurchase, product.Quantity, product.ImagePath));
         }
 
         return orderEntity;

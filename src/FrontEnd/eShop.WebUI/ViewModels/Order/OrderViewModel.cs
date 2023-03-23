@@ -13,6 +13,11 @@ public class OrderViewModel
         public OrderStatusEnum Status { get; set; }
         public string StatusDescription { get; set; }
         public List<Product> Products { get; set; }
+
+        public decimal CalculateTotal()
+        {
+            return Products.Sum(c => c.PriceAtPurchase);
+        }
     }
 
     public class Product
@@ -21,5 +26,6 @@ public class OrderViewModel
         public string Name { get; set; }
         public decimal PriceAtPurchase { get; set; }
         public int Quantity { get; set; }
+        public string ImagePath { get; set; }
     }
 }
