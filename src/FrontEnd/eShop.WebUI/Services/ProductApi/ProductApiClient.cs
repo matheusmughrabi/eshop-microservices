@@ -15,6 +15,28 @@ public class ProductApiClient : IProductApiClient
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public async Task<GetCategoriesResponse> GetCategoriesPaginated(int? page = null, int? itemsPerPage = null, bool paginate = false)
+    {
+        var pageQueryParam = new QueryParamModel() { Key = "Page", Value = page?.ToString() };
+        var itemsPerPageQueryParam = new QueryParamModel() { Key = "ItemsPerPage", Value = itemsPerPage?.ToString() };
+        var paginateQueryParam = new QueryParamModel() { Key = "Paginate", Value = paginate.ToString() };
+
+        var queryParamsString = GetQueryParams(pageQueryParam, itemsPerPageQueryParam, paginateQueryParam);
+        var route = $"/api/Category/GetPaginated" + queryParamsString;
+
+        var httpResponseMessage = await _httpClient.GetAsync(route);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<GetCategoriesResponse>(response, options);
+    }
+
     public async Task<GetProductByIdResponse> GetById(Guid id)
     {
         var route = $"/api/Product/{id}";
@@ -84,7 +106,7 @@ public class ProductApiClient : IProductApiClient
         var result = "";
         foreach (var queryParam in queryParams)
         {
-            if (queryParam.Key is null || queryParam.Value is null)
+            if (string.IsNullOrEmpty(queryParam.Key) || string.IsNullOrEmpty(queryParam.Value))
                 continue;
 
             if (result == "")
@@ -98,6 +120,23 @@ public class ProductApiClient : IProductApiClient
         }
 
         return result;
+    }
+
+    public async Task<GetAllCategoryGroupsResponse> GetAllCategoryGroups()
+    {
+        var route = $"/api/CategoryGroup/GetAll";
+
+        var httpResponseMessage = await _httpClient.GetAsync(route);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<GetAllCategoryGroupsResponse>(response, options);
     }
 }
 

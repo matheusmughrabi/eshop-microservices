@@ -10,6 +10,8 @@ namespace eShop.ProductApi.DataAccess.Mappings
         {
             builder.ToTable("Category");
 
+            builder.HasKey(c => c.Id);
+
             builder.Property(c => c.Name)
                     .IsRequired()
                     .HasColumnType("nvarchar(100)");
@@ -20,7 +22,6 @@ namespace eShop.ProductApi.DataAccess.Mappings
             builder
                 .HasMany(c => c.Products)
                 .WithOne(p => p.Category)
-                //.IsRequired(false)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }

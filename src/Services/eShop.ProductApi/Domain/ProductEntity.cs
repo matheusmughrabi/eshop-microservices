@@ -2,7 +2,7 @@
 
 namespace eShop.ProductApi.Entity
 {
-    public class ProductEntity : Entity
+    public class ProductEntity : BaseEntity
     {
         protected ProductEntity() { }
 

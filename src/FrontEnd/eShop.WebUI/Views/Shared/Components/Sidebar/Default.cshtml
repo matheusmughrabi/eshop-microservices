@@ -1,0 +1,34 @@
+﻿@using eShop.WebUI.ViewModels.Sidebar;
+@model SidebarViewModel;
+
+<nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+        <div class="list-group list-group-flush mx-3 mt-4">
+
+            @foreach (var categoryGroup in Model.CategoryGroups)
+            {
+                <!-- Collapse button -->
+                <a class="list-group-item list-group-item-action py-2 ripple" aria-current="true"
+                   data-mdb-toggle="collapse" href="#collapseExample-@categoryGroup.Name" aria-expanded="true"
+                   aria-controls="collapseExample-@categoryGroup.Name">
+                    <b><span>@categoryGroup.Name</span></b>
+                </a>
+
+                <!-- Collapsed content -->
+                <ul id="collapseExample-@categoryGroup.Name" class="collapse list-group list-group-flush">
+
+                    @foreach (var category in categoryGroup.Categories)
+                    {
+                        <li class="list-group-item py-1">
+                            <a href="" class="text-reset">@category.Name</a>
+                        </li>
+                    }
+
+                </ul>
+            }
+
+            
+            <!-- Collapse 1 -->
+        </div>
+    </div>
+</nav>

@@ -22,18 +22,38 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var response = await _productApiClient.GetProducts();
+        var categoriesResponse = await _productApiClient.GetCategoriesPaginated(paginate: false);
 
-        var products = response.Products.Select(c => new ProductsViewModel.Product()
+        var categoriesViewModel = new IndexViewModel.CategoriesViewModel()
         {
-            Id = c.Id,
-            Name = c.Name,
-            Description = c.Description,
-            Price = c.Price,
-            ImagePath = c.ImagePath
-        }).ToList();
+            Categories = categoriesResponse.Categories.Select(category => new IndexViewModel.CategoriesViewModel.Category
+            {
+                Id = category.Id,
+                Name = category.Name
+            }).ToList()
+        };
 
-        return View(new ProductsViewModel() { Products = products });
+        var productsResponse = await _productApiClient.GetProducts();
+
+        var productsViewModel = new IndexViewModel.ProductsViewModel()
+        {
+            Products = productsResponse.Products.Select(c => new IndexViewModel.ProductsViewModel.Product()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                Price = c.Price,
+                ImagePath = c.ImagePath
+            }).ToList()
+        };
+
+        var indexViewModel = new IndexViewModel()
+        {
+            CategoriesVM = categoriesViewModel,
+            ProductsVM = productsViewModel
+        };
+
+        return View(indexViewModel);
     }
 
     [HttpPost]

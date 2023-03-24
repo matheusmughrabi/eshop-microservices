@@ -1,9 +1,9 @@
 ﻿@using System.Globalization
 @using eShop.WebUI.ViewModels.Products
-@model ProductsViewModel;
+@model IndexViewModel;
 
 <div class="row ">
-    @foreach (var product in Model.Products)
+    @foreach (var product in Model.ProductsVM.Products)
     {
         <div class="col-md-6 col-xl-4 col-xxl-3 mb-4">
             <div class="card h-100 shadow mx-auto" style="width: 17rem;">

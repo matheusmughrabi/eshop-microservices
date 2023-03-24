@@ -1,5 +1,6 @@
 ﻿using eShop.ProductApi.DataAccess;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +9,15 @@ namespace eShop.ProductApi.Features.Category
     public partial class CategoryController
     {
         [HttpGet("GetPaginated")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPaginated([FromQuery] GetCategoriesPaginatedQuery request) => Ok(await _mediator.Send(request));
     }
 
     public class GetCategoriesPaginatedQuery : IRequest<GetCategoriesPaginatedQueryResponse>
     {
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue, ErrorMessage = "Page must be an integer equal or greater than 1")]
         public int Page { get; set; }
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue, ErrorMessage = "ItemsPerPage must be an integer equal or greater than 1")]
         public int ItemsPerPage { get; set; }
+        public bool Paginate { get; set; }
     }
 
     public class GetCategoriesPaginatedQueryResponse
@@ -46,10 +47,17 @@ namespace eShop.ProductApi.Features.Category
         {
             var skip = (request.Page - 1) * request.ItemsPerPage;
 
-            var categories = await _productDbContext.Category
-                .AsNoTracking()
-                .Skip(skip)
-                .Take(request.ItemsPerPage)
+            var categoriesQuery = _productDbContext.Category
+                .AsNoTracking();
+
+            if (request.Paginate)
+            {
+                categoriesQuery = categoriesQuery
+                    .Skip(skip)
+                    .Take(request.ItemsPerPage);
+            }
+
+            var categories = await categoriesQuery
                 .OrderBy(c => c.Name)
                 .Select(c => new GetCategoriesPaginatedQueryResponse.Category()
                 {
