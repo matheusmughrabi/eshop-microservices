@@ -5,14 +5,14 @@
 <div class="row ">
     @foreach (var product in Model.Products)
     {
-        <div class="col-sm-6 col-lg-3 mb-4">
-            <div class="card h-100 shadow" style="width: 20rem;">
-                <img src=@product.ImagePath class="card-img-top d-flex justify-content-center" style="width: 20rem; height: 18rem">
+        <div class="col-md-6 col-xl-4 col-xxl-3 mb-4">
+            <div class="card h-100 shadow mx-auto" style="width: 17rem;">
+                <img src=@product.ImagePath class="card-img-top d-flex justify-content-center" style="width: 17rem; height: 15rem">
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
                     <p class="card-text">@product.Price.ToString("C", CultureInfo.CurrentCulture)</p>
                     <div class="row">
-                        <button class="btn-primary add-to-basket-button" value="@product.Id">Add to basket</button>
+                        <button class="btn btn-primary add-to-basket-button" value="@product.Id">Add to basket</button>
                     </div>
                 </div>
             </div>

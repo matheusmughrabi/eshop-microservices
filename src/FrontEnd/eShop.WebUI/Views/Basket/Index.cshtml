@@ -31,7 +31,7 @@
                             <td scope="row" class="align-middle">@item.Price.ToString("C", CultureInfo.CurrentCulture)</td>
                             <td scope="row" class="align-middle">@item.TotalCost.ToString("C", CultureInfo.CurrentCulture)</td>
                             <td scope="row" class="align-middle">
-                                <button class="btn-danger remove-item-button" value="@item.Id">Remove</button>
+                                <button class="btn btn-danger remove-item-button" value="@item.Id">Remove</button>
                             </td>
                         </tr>
                     }
@@ -49,7 +49,7 @@
 
             </table>
 
-            <button id="place-order-button" class="btn-primary">Place order</button>
+            <button id="place-order-button" class="btn btn-primary">Place order</button>
         }
         else
         {
