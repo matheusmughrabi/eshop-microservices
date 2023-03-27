@@ -20,20 +20,9 @@ public class ProductsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(Guid? categoryId)
     {
-        var categoriesResponse = await _productApiClient.GetCategoriesPaginated(paginate: false);
-
-        var categoriesViewModel = new IndexViewModel.CategoriesViewModel()
-        {
-            Categories = categoriesResponse.Categories.Select(category => new IndexViewModel.CategoriesViewModel.Category
-            {
-                Id = category.Id,
-                Name = category.Name
-            }).ToList()
-        };
-
-        var productsResponse = await _productApiClient.GetProducts();
+        var productsResponse = await _productApiClient.GetProducts(categoryId);
 
         var productsViewModel = new IndexViewModel.ProductsViewModel()
         {
@@ -49,7 +38,6 @@ public class ProductsController : Controller
 
         var indexViewModel = new IndexViewModel()
         {
-            CategoriesVM = categoriesViewModel,
             ProductsVM = productsViewModel
         };
 

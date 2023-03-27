@@ -61,7 +61,7 @@ public class ProductApiClient : IProductApiClient
 
     public async Task<GetProductsResponse> GetProducts(Guid? categoryId = null)
     {
-        var categoryIdQueryParam = new QueryParamModel() { Key = "CategoryId", Value = categoryId.ToString() };
+        var categoryIdQueryParam = new QueryParamModel() { Key = "CategoryId", Value = categoryId?.ToString() };
         var queryParamsString = GetQueryParams(categoryIdQueryParam);
         var route = $"/api/Product/GetProducts" + queryParamsString;
 

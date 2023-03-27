@@ -20,7 +20,7 @@
                     @foreach (var category in categoryGroup.Categories)
                     {
                         <li class="list-group-item py-1">
-                            <a href="" class="text-reset">@category.Name</a>
+                            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.Id" class="text-reset">@category.Name</a>
                         </li>
                     }
 

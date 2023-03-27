@@ -2,19 +2,7 @@
 
 public class IndexViewModel
 {
-    public CategoriesViewModel CategoriesVM  { get; set; }
     public ProductsViewModel ProductsVM { get; set; }
-
-    public class CategoriesViewModel
-    {
-        public List<Category> Categories { get; set; }
-
-        public class Category
-        {
-            public Guid Id { get; set; }
-            public string Name { get; set; }
-        }
-    }
 
     public class ProductsViewModel
     {
