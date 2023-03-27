@@ -32,6 +32,12 @@ public class LoginModel : PageModel
 
         return RedirectToPage("/Catalog/Category/Index");
     }
+
+    public async Task<IActionResult> OnGetLogoutAsync()
+    {
+        Response.Cookies.Delete("X-Access-Token");
+        return RedirectToPage();
+    }
 }
 
 public class LoginRequest
