@@ -33,4 +33,23 @@ public class IdentityApiClient : IIdentityApiClient
 
         return JsonSerializer.Deserialize<GetAccessTokenResponse>(response, options);
     }
+
+    public async Task<RegisterUserResponse> RegisterUser(RegisterUserRequest request)
+    {
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            Application.Json);
+
+        var httpResponseMessage = await _httpClient.PostAsync("/api/User/Register", content);
+
+        var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<RegisterUserResponse>(response, options);
+    }
 }

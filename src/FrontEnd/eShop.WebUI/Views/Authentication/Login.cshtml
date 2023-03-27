@@ -1,5 +1,11 @@
 ﻿@using eShop.WebUI.ViewModels.Authentication
+@using eShop.WebUI.ViewModels.Toast;
 @model LoginViewModel;
+
+@if (TempData["UserCreated"] is not null) 
+{
+    @await Html.PartialAsync("~/Views/Shared/_Toast.cshtml", new ToastViewModel(TempData["UserCreated"].ToString(), ToastTypeEnum.Success))
+}
 
 <div class="card shadow">
     <div class="card-body">

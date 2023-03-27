@@ -29,10 +29,29 @@ public class UserController : ControllerBase
 
         var createUserResult = await _userManager.CreateAsync(identityUser, request.Password);
 
-        if (createUserResult.Succeeded)
-            return Ok();
+        
 
-        return BadRequest(createUserResult.Errors);
+        if (createUserResult.Succeeded)
+            return Ok(new RegisterUserResponse()
+            {
+                Notifications = new List<Notification>()
+                {
+                    new Notification()
+                    {
+                        Message = "User created successfuly",
+                        Type = ENotificationType.Informative
+                    }
+                }
+            });
+
+        return BadRequest(new RegisterUserResponse()
+        {
+            Notifications = createUserResult.Errors.Select(error => new Notification()
+            {
+                Message = error.Description,
+                Type = ENotificationType.Error
+            }).ToList()
+        });
     }
 
     [HttpGet("GetClaims")]

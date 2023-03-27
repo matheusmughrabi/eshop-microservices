@@ -1,7 +1,9 @@
 ﻿using eShop.WebUI.Services.Identity;
+using eShop.WebUI.Services.Identity.Requests;
 using eShop.WebUI.ViewModels.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -44,5 +46,39 @@ public class AuthenticationController : Controller
     {
         Response.Cookies.Delete("X-Access-Token");
         return RedirectToAction("Index", "Products");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Register()
+    {
+        return View(new RegisterUserViewModel());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register([FromForm] RegisterUserViewModel viewModel)
+    {
+        if (ModelState.IsValid == false)
+            return View("Register");
+
+        var request = new RegisterUserRequest()
+        {
+            Username = viewModel.Username,
+            Email = viewModel.Email,
+            Password = viewModel.Password
+        };
+
+        var response = await _identityApiClient.RegisterUser(request);
+
+        foreach (var error in response.Notifications.Where(c => c.Type == ENotificationType.Error))
+        {
+            ModelState.AddModelError("", error.Message);
+        }
+
+        if (ModelState.IsValid == false)
+            return View("Register");
+
+        TempData["UserCreated"] = "User created successfuly";
+
+        return RedirectToAction("Login");
     }
 }
