@@ -1,6 +1,7 @@
 using eShop.AdminUI.Services.ProductApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace eShop.AdminUI.Pages.Catalog.Category;
 
@@ -15,9 +16,17 @@ public class CreateModel : PageModel
 
     [BindProperty]
     public CreateCategoryViewModel CreateCategoryViewModel { get; set; }
+    public List<SelectListItem> CategoriesDropdown { get; set; }
 
     public async Task OnGetAsync()
     {
+        var response = await _productApiClient.GetCategoryGroupsSummary();
+
+        CategoriesDropdown = new List<SelectListItem>();
+        foreach (var categoryGroup in response.CategoryGroups)
+        {
+            CategoriesDropdown.Add(new SelectListItem() { Value = categoryGroup.Id.ToString(), Text = categoryGroup.Name });
+        }
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -33,6 +42,7 @@ public class CreateModel : PageModel
 
 public class CreateCategoryViewModel
 {
+    public Guid CategoryGroupId { get; set; }
     public string Name { get; set; }
     public string? Description { get; set; }
 }
@@ -43,6 +53,7 @@ public static class CreateCategoryViewModelMaper
     {
         return new ProductApiClient.CreateCategoryRequest()
         {
+            CategoryGroupId = source.CategoryGroupId,
             Name = source.Name,
             Description = source.Description
         };

@@ -23,7 +23,7 @@ namespace eShop.AdminUI.Pages.Catalog.Pendencies
             var response = await _productApiClient.GetProductsWithoutCategory(selectedpage, itemsPerPage);
             ProductsWithoutCategoryViewModel.Products = response.MapToProductsWithoutCategoryViewModel(selectedpage, itemsPerPage);
 
-            var categories = await _productApiClient.GetCategoriesPaginated(1, 100);
+            var categories = await _productApiClient.GetCategoriesPaginated(1, 100, paginate: true);
 
             CategoriesDropDown = new List<SelectListItem>();
             foreach (var category in categories.Categories)

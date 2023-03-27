@@ -52,6 +52,12 @@ builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration.GetCon
 
 builder.Services.AddScoped<IBlobService, BlobService>();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "eShop_Product";
+});
+
 var app = builder.Build();
 
 app.CreateBlobContainers();

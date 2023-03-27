@@ -49,7 +49,11 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item mx-1">
-                            <a class="nav-link text-dark" asp-controller="Basket" asp-action="Index">Basket</a>
+                            <a class="nav-link text-dark" asp-controller="Basket" asp-action="Index">My Basket</a>
+                        </li>
+
+                        <li class="nav-item mx-1">
+                            <a class="nav-link text-dark" asp-controller="Order" asp-action="Index">My orders</a>
                         </li>
                     }
                 </ul>

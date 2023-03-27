@@ -28,7 +28,7 @@ namespace eShop.AdminUI.Pages.Catalog.Category
 
             CategoryDetailsViewModel = response.MapToCategoryDetailsViewModel(selectedPage, itemsPerPage);
 
-            var categories = await _productApiClient.GetCategoriesPaginated(1, 100);
+            var categories = await _productApiClient.GetCategoriesPaginated(1, 100, paginate: true);
 
             CategoriesDropDown = new List<SelectListItem>();
             foreach (var category in categories.Categories.Where(c => c.Id != categoryId))

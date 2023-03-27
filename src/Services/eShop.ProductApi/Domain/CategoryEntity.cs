@@ -9,13 +9,14 @@ public class CategoryEntity : BaseEntity
     {
     }
 
-    public CategoryEntity(string name, string? description = null)
+    public CategoryEntity(string name, string? description = null, Guid? categoryGroupId = null)
     {
         ValidateIfNullOrEmptyName(name);
         ValidateIfNameIsTooLong(name);
 
         Name = name;
         Description = description;
+        CategoryGroupId = categoryGroupId;
     }
 
     public string Name { get; private set; }

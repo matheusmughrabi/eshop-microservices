@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace eShop.ProductApi.Features.Category
 {
@@ -31,6 +32,7 @@ namespace eShop.ProductApi.Features.Category
             public string Name { get; set; }
             public string? Description { get; set; }
             public int TotalProducts { get; set; }
+            public string? CategoryGroupName { get; set; }
         }
     }
 
@@ -58,13 +60,15 @@ namespace eShop.ProductApi.Features.Category
             }
 
             var categories = await categoriesQuery
+                .Include(c => c.CategoryGroup)
                 .OrderBy(c => c.Name)
                 .Select(c => new GetCategoriesPaginatedQueryResponse.Category()
                 {
                     Id = c.Id,
                     Name = c.Name,
                     Description = c.Description,
-                    TotalProducts = c.Products.Count()
+                    TotalProducts = c.Products.Count(),
+                    CategoryGroupName = c.CategoryGroup.Name
                 })
                 .ToListAsync();
 

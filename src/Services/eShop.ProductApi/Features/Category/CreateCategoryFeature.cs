@@ -16,12 +16,14 @@ namespace eShop.ProductApi.Features.Category
 
     public class CreateCategoryCommand : IRequest<CreateCategoryCommandResponse>
     {
-        public CreateCategoryCommand(string name, string? description)
+        public CreateCategoryCommand(Guid categoryGroupId, string name, string? description)
         {
+            CategoryGroupId = categoryGroupId;
             Name = name;
             Description = description;
         }
 
+        public Guid CategoryGroupId { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
     }
@@ -82,7 +84,7 @@ namespace eShop.ProductApi.Features.Category
                     }
                 };
 
-            var categoryEntity = new CategoryEntity(request.Name, request.Description);
+            var categoryEntity = new CategoryEntity(request.Name, request.Description, request.CategoryGroupId);
             await _productDbContext.Category.AddAsync(categoryEntity);
             await _productDbContext.SaveChangesAsync();
 
