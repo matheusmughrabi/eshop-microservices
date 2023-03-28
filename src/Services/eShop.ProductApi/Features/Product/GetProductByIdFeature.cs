@@ -22,6 +22,7 @@ namespace eShop.ProductApi.Features.Product
         public string Name { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
+        public int QuantityOnHand { get; set; }
         public string ImagePath { get; set; }
         public Guid CategoryId { get; set; }
     }
@@ -46,6 +47,7 @@ namespace eShop.ProductApi.Features.Product
                     Name = c.Name,
                     Description = c.Description,
                     Price = c.Price,
+                    QuantityOnHand = c.QuantityOnHand,
                     ImagePath = c.ImagePath,
                     CategoryId = c.Category.Id
                 })

@@ -49,7 +49,7 @@
 
             </table>
 
-            <button id="place-order-button" class="btn btn-primary">Place order</button>
+            <button id="checkout-basket-button" class="btn btn-primary">Checkout basket</button>
         }
         else
         {
@@ -88,9 +88,9 @@
             });
      })
 
-    $('#place-order-button').click(function(){
+    $('#checkout-basket-button').click(function(){
         $.ajax({
-               url: '/Basket/PlaceOrder',
+               url: '/Basket/Checkout',
                type: 'POST',
                contentType: 'application/x-www-form-urlencoded',
                headers: {

@@ -33,6 +33,7 @@ public class GetProductsQueryResponse
         public string Name { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
+        public int QuantityOnHand { get; set; }
         public string ImagePath { get; set; }
         public Guid? CategoryId { get; set; }
     }
@@ -68,7 +69,8 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, GetProd
                 Description = c.Description,
                 ImagePath = c.ImagePath,
                 Price = c.Price,
-                CategoryId = c.CategoryId
+                CategoryId = c.CategoryId,
+                QuantityOnHand = c.QuantityOnHand
             })
             .OrderBy(c => c.CategoryId)
             .ToList();

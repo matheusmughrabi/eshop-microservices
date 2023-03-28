@@ -50,28 +50,9 @@ public class BasketController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> PlaceOrder()
+    public async Task<IActionResult> Checkout()
     {
-        var basket = await _basketApiClient.GetBasket();
-        if (basket.Items.Count == 0)
-            return Json(new { success = false, messsage = "Cannot place order with an empty basket" });
-
-        var success = await _orderApiClient.PlaceOrder(new PlaceOrderRequest()
-        {
-            Products = basket.Items.Select(c => new PlaceOrderRequest.Product()
-            {
-                Id = c.Id.ToString(),
-                Name = c.Name,
-                PriceAtPurchase = c.Price,
-                Quantity = c.Quantity,
-                ImagePath = c.ImagePath
-            }).ToList()
-        });
-
-        if (!success)
-            return Json(new { success = false, messsage = "Order was not placed" });
-
-        await _basketApiClient.RemoveAllItems();
+        var success = await _basketApiClient.Checkout();
 
         return Json(new { success = success });
     }

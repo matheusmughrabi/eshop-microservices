@@ -44,7 +44,7 @@ public class BasketController : ControllerBase
         basket.AddItem(item);
 
         // Using a long expiration time here to allow users to have access to their baskets for decent amount of time
-        await _cache.SetRecordAsync(recordId, basket, TimeSpan.FromHours(2)); 
+        await _cache.SetRecordAsync(recordId, basket, TimeSpan.FromHours(2));
 
         return Ok();
     }
@@ -95,6 +95,22 @@ public class BasketController : ControllerBase
         var recordId = $"{User.Identity.Name}";
         await _cache.RemoveAsync(recordId);
 
+        return Ok();
+    }
+
+    [HttpPost("Checkout")]
+    public async Task<IActionResult> Checkout()
+    {
+        var recordId = $"{User.Identity.Name}";
+        var basket = await _cache.GetRecordAsync<BasketModel>(recordId);
+
+        if (basket is null)
+            return NotFound();
+
+        // Clear basket
+        await _cache.RemoveAsync(recordId);
+
+        // Publish checkout basket event
         return Ok();
     }
 }

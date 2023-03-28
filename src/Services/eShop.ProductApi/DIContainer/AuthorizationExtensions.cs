@@ -10,6 +10,11 @@ public static class AuthorizationExtensions
             {
                 policyBuilder.RequireClaim("catalog", "admin");
             });
+
+            config.AddPolicy("Stock_Admin", policyBuilder =>
+            {
+                policyBuilder.RequireClaim("stock", "admin");
+            });
         });
     }
 }

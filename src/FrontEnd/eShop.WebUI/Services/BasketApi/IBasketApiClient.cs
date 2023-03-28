@@ -8,4 +8,5 @@ public interface IBasketApiClient
     Task<bool> AddToBasket(AddToBasketRequest request);
     Task<bool> RemoveItem(RemoveItemFromBasketRequest request);
     Task<bool> RemoveAllItems();
+    Task<bool> Checkout();
 }

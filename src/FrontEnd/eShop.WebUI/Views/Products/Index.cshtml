@@ -11,9 +11,20 @@
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
                     <p class="card-text">@product.Price.ToString("C", CultureInfo.CurrentCulture)</p>
-                    <div class="row">
-                        <button class="btn btn-primary add-to-basket-button" value="@product.Id">Add to basket</button>
-                    </div>
+
+                    @if(product.QuantityOnHand > 0)
+                    {
+                        <div class="row">
+                            <button class="btn btn-primary add-to-basket-button" value="@product.Id">Add to basket</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <p class="text-danger">Out of stock</p>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>
@@ -44,7 +55,7 @@
                    alert("Item added to basket");
                }
                else{
-                   alert("Item was not added to basket");
+                   alert(data.message);
                }
             },
            error: function( jqXhr, textStatus, errorThrown ){

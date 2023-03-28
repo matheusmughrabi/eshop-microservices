@@ -31,6 +31,18 @@ services:
     ports:
       - "27017:27017"
 
+  rabbitmq3:
+        container_name: "rabbitmq"
+        image: rabbitmq:3-management-alpine
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        ports:
+            # AMQP protocol port
+            - '5672:5672'
+            # HTTP management UI
+            - '15672:15672'
+
 networks: 
   storage-azure:
     driver: bridge

@@ -15,12 +15,15 @@ namespace eShop.ProductApi.Entity
             Description = description;
             Price = price;
             ImagePath = imagePath;
+            // When the product has just been created, the quantity on hand is zero
+            QuantityOnHand = 0; 
         }
 
         public string Name { get; private set; }
         public string? Description { get; private set; }
         public decimal Price { get; private set; }
         public string? ImagePath { get; set; }
+        public int QuantityOnHand { get; private set; }
         public Guid? CategoryId { get; private set; }
         public CategoryEntity? Category { get; }
 
@@ -37,6 +40,14 @@ namespace eShop.ProductApi.Entity
         public void ChangeCategory(Guid categoryId)
         {
             CategoryId = categoryId;
+        }
+
+        public void AddStock(int quantity)
+        {
+            if(quantity <= 0)
+                throw new InvalidPropertyValueException("quantity must be greater than zero.");
+
+            QuantityOnHand += quantity;
         }
 
         private void GuardAgainstNullName(string name)

@@ -32,6 +32,7 @@ public class ProductsController : Controller
                 Name = c.Name,
                 Description = c.Description,
                 Price = c.Price,
+                QuantityOnHand = c.QuantityOnHand,
                 ImagePath = c.ImagePath
             }).ToList()
         };
@@ -57,17 +58,25 @@ public class ProductsController : Controller
 
         var product = await _productApiClient.GetById(addToCartViewModel.Id);
 
-        var request = new AddToBasketRequest()
+        if (product.QuantityOnHand > 0)
         {
-            Id = addToCartViewModel.Id,
-            Name = product.Name,
-            Price = product.Price,
-            ImagePath = product.ImagePath,
-            Quantity = 1
-        };
+            var request = new AddToBasketRequest()
+            {
+                Id = addToCartViewModel.Id,
+                Name = product.Name,
+                Price = product.Price,
+                ImagePath = product.ImagePath,
+                Quantity = 1
+            };
 
-        var success = await _basketApiClient.AddToBasket(request);
+            var success = await _basketApiClient.AddToBasket(request);
 
-        return Json(new { success = success });
+            return Json(new { success = success });
+        }
+        else
+        {
+            return Json(new { success = false, message = "Product sold out" });
+        }
+        
     }
 }
