@@ -1,9 +1,16 @@
-﻿using eShop.BasketApi.Extensions;
+﻿using eShop.BasketApi.Events;
+using eShop.BasketApi.Extensions;
 using eShop.BasketApi.Models;
 using eShop.BasketApi.Requests;
+using eShop.EventBus.Events.BasketCheckout;
+using eShop.EventBus.Implementation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
+using System.Text;
+using System.Text.Json;
 
 namespace eShop.BasketApi.Controllers;
 
@@ -13,10 +20,12 @@ namespace eShop.BasketApi.Controllers;
 public class BasketController : ControllerBase
 {
     private readonly IDistributedCache _cache;
+    private readonly BasketCheckoutEventService _basketCheckoutEventService;
 
-    public BasketController(IDistributedCache cache)
+    public BasketController(IDistributedCache cache, BasketCheckoutEventService basketCheckoutEventService)
     {
         _cache = cache;
+        _basketCheckoutEventService = basketCheckoutEventService;
     }
 
     [HttpGet("GetBasket")]
@@ -110,7 +119,22 @@ public class BasketController : ControllerBase
         // Clear basket
         await _cache.RemoveAsync(recordId);
 
+        var eventMessage = new BasketCheckoutEventMessage()
+        {
+            UserId = User.Identity.Name,
+            Products = basket.Items.Select(item => new BasketCheckoutEventMessage.Product()
+            {
+                Id = item.Id.ToString(),
+                Name = item.Name,
+                ImagePath = item.ImagePath,
+                PriceAtPurchase = item.Price,
+                Quantity = item.Quantity
+            }).ToList()
+        };
+
         // Publish checkout basket event
+        _basketCheckoutEventService.Publish(eventMessage);
+
         return Ok();
     }
 }

@@ -1,4 +1,8 @@
 using eShop.BasketApi.DIContainer;
+using eShop.BasketApi.Events;
+using eShop.EventBus.Configuration;
+using eShop.EventBus.Events.BasketCheckout;
+using eShop.EventBus.Implementation;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +45,10 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
     options.InstanceName = "eShop_Basket";
 });
+
+builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddScoped<IMessageBus, RabbitMessageBus>();
+builder.Services.AddScoped<BasketCheckoutEventService>();
 
 var app = builder.Build();
 

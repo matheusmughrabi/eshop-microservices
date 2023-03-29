@@ -1,9 +1,8 @@
-﻿using MediatR;
-using System.Text.Json.Serialization;
+﻿using eShop.EventBus.Events.Base;
 
-namespace eShop.OrderingApi.Application.PlaceOrder;
+namespace eShop.EventBus.Events.BasketCheckout;
 
-public class PlaceOrderCommand : IRequest<PlaceOrderCommandResult>
+public class BasketCheckoutEventMessage : IEventMessage
 {
     public string? UserId { get; set; }
     public List<Product> Products { get; set; }

@@ -1,5 +1,8 @@
+using eShop.EventBus.Configuration;
+using eShop.EventBus.Implementation;
 using eShop.OrderingApi.Application.PlaceOrder;
 using eShop.OrderingApi.DIContainer;
+using eShop.OrderingApi.EventConsumers;
 using eShop.OrderingApi.Repository;
 using MediatR;
 using Microsoft.OpenApi.Models;
@@ -48,6 +51,10 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddSingleton<IMessageBus, RabbitMessageBus>();
+builder.Services.AddHostedService<BasketCheckoutEventConsumer>();
 
 var app = builder.Build();
 
