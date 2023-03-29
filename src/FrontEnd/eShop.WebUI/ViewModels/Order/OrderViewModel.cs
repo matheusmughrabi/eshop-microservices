@@ -16,7 +16,7 @@ public class OrderViewModel
 
         public decimal CalculateTotal()
         {
-            return Products.Sum(c => c.PriceAtPurchase);
+            return Products.Sum(c => c.PriceAtPurchase * c.Quantity);
         }
     }
 
