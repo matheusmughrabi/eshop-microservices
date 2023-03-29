@@ -1,25 +1,26 @@
 ﻿using eShop.EventBus.Events.Base;
+using eShop.EventBus.Events.Messages;
 using eShop.EventBus.Implementation;
 using RabbitMQ.Client;
 using System.Text.Json;
 using System.Text;
 
-namespace eShop.EventBus.Events.BasketCheckout;
+namespace eShop.ProductApi.Events.Publishers;
 
-public class BasketCheckoutEventService : IEventService<BasketCheckoutEventMessage>
+public class ProductsSubtractedFromStockEventPublisher : IEventPublisher<ProductsSubtractedFromStockEventMessage>
 {
-    private const string EXCHANGENAME = "basketCheckoutExchange";
-    private const string ROUTINGKEY = "basketCheckoutRoutingKey";
-    private const string QUEUENAME = "basketCheckoutQueue";
+    private const string EXCHANGENAME = "productsSubtractedFromStockExchange";
+    private const string ROUTINGKEY = "productsSubtractedFromStockRoutingKey";
+    private const string QUEUENAME = "productsSubtractedFromStockQueue";
 
     private readonly IMessageBus _messageBus;
 
-    public BasketCheckoutEventService(IMessageBus messageBus)
+    public ProductsSubtractedFromStockEventPublisher(IMessageBus messageBus)
     {
         _messageBus = messageBus;
     }
 
-    public void Publish(BasketCheckoutEventMessage eventMessage)
+    public void Publish(ProductsSubtractedFromStockEventMessage eventMessage)
     {
         using (var connection = _messageBus.GetConnection())
         using (var channel = _messageBus.GetChannel(connection))
@@ -33,10 +34,5 @@ public class BasketCheckoutEventService : IEventService<BasketCheckoutEventMessa
 
             channel.BasicPublish(exchange: EXCHANGENAME, routingKey: ROUTINGKEY, basicProperties: null, body: body);
         }
-    }
-
-    public void Consume()
-    {
-        throw new NotImplementedException();
     }
 }

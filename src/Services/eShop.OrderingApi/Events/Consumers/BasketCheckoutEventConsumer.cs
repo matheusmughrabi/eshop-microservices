@@ -5,7 +5,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace eShop.OrderingApi.EventConsumers;
+namespace eShop.OrderingApi.Events.EventConsumers;
 
 public class BasketCheckoutEventConsumer : IHostedService
 {

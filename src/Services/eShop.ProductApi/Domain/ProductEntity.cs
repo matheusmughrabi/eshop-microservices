@@ -50,6 +50,22 @@ namespace eShop.ProductApi.Entity
             QuantityOnHand += quantity;
         }
 
+        /// <summary>
+        /// Inform a positive quantity and this method will subtract it from the stock
+        /// </summary>
+        /// <param name="quantity"></param>
+        /// <exception cref="InvalidPropertyValueException"></exception>
+        public void SubtractStock(int quantity)
+        {
+            if (quantity <= 0)
+                throw new InvalidPropertyValueException("quantity must be greater than zero.");
+
+            QuantityOnHand -= quantity;
+
+            if (QuantityOnHand < 0)
+                throw new Exception("quantity is larger than QuantityOnHand");
+        }
+
         private void GuardAgainstNullName(string name)
         {
             if (string.IsNullOrEmpty(name))

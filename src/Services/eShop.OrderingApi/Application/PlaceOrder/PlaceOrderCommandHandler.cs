@@ -1,4 +1,5 @@
 ﻿using eShop.OrderingApi.Entity;
+using eShop.OrderingApi.Events.Publishers;
 using eShop.OrderingApi.Repository;
 using MediatR;
 
@@ -8,13 +9,16 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Place
 {
     private readonly IOrderRepository _orderRepository;
     private readonly PlaceOrderCommandValidator _placeOrderCommandValidator;
+    private readonly OrderPlacedEventPublisher _orderPlacedEventPublisher;
 
     public PlaceOrderCommandHandler(
-        IOrderRepository orderRepository, 
-        PlaceOrderCommandValidator placeOrderCommandValidator)
+        IOrderRepository orderRepository,
+        PlaceOrderCommandValidator placeOrderCommandValidator,
+        OrderPlacedEventPublisher orderPlacedEventPublisher)
     {
         _orderRepository = orderRepository;
         _placeOrderCommandValidator = placeOrderCommandValidator;
+        _orderPlacedEventPublisher = orderPlacedEventPublisher;
     }
 
     public async Task<PlaceOrderCommandResult> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
@@ -26,6 +30,9 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Place
         var orderEntity = BuildOrder(request);
 
         await _orderRepository.InsertAsync(orderEntity);
+
+        var eventMessage = BuildOrderPlacedEventMessage(orderEntity);
+        _orderPlacedEventPublisher.Publish(eventMessage);
 
         return new PlaceOrderCommandResult()
         {
@@ -44,5 +51,18 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommand, Place
         }
 
         return orderEntity;
+    }
+
+    private EventBus.Events.Messages.OrderPlacedEventMessage BuildOrderPlacedEventMessage(OrderEntity orderEntity)
+    {
+        return new EventBus.Events.Messages.OrderPlacedEventMessage()
+        {
+            OrderId = orderEntity.Id,
+            Products = orderEntity.Products.Select(product => new EventBus.Events.Messages.OrderPlacedEventMessage.Product()
+            {
+                Id = product.Id,
+                Quantity = product.Quantity
+            }).ToList()
+        };
     }
 }

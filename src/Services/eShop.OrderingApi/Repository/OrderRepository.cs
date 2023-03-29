@@ -1,5 +1,7 @@
-﻿using eShop.OrderingApi.Entity;
+﻿using eShop.OrderingApi.Domain.Enums;
+using eShop.OrderingApi.Entity;
 using eShop.OrderingApi.Repository.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace eShop.OrderingApi.Repository;
@@ -37,5 +39,14 @@ public class OrderRepository : IOrderRepository
             throw new ArgumentNullException(nameof(entity));
 
         await _orderCollection.InsertOneAsync(entity);
+    }
+
+    public async Task<bool> UpdateStatus(string id, OrderStatusEnum status)
+    {
+        var filter = Builders<OrderEntity>.Filter.Eq(c => c.Id, id);
+        var update = Builders<OrderEntity>.Update.Set(c => c.Status, status);
+        var result = await _orderCollection.UpdateOneAsync(filter, update);
+
+        return result.ModifiedCount > 0;
     }
 }

@@ -2,7 +2,9 @@ using eShop.EventBus.Configuration;
 using eShop.EventBus.Implementation;
 using eShop.OrderingApi.Application.PlaceOrder;
 using eShop.OrderingApi.DIContainer;
-using eShop.OrderingApi.EventConsumers;
+using eShop.OrderingApi.Events.Consumers;
+using eShop.OrderingApi.Events.EventConsumers;
+using eShop.OrderingApi.Events.Publishers;
 using eShop.OrderingApi.Repository;
 using MediatR;
 using Microsoft.OpenApi.Models;
@@ -55,6 +57,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddSingleton<IMessageBus, RabbitMessageBus>();
 builder.Services.AddHostedService<BasketCheckoutEventConsumer>();
+builder.Services.AddHostedService<ProductsSubtractedFromStockEventConsumer>();
+builder.Services.AddScoped<OrderPlacedEventPublisher>();
 
 var app = builder.Build();
 

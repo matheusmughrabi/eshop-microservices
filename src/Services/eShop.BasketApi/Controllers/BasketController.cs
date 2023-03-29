@@ -1,4 +1,5 @@
 ﻿using eShop.BasketApi.Events;
+using eShop.BasketApi.Events.Publishers;
 using eShop.BasketApi.Extensions;
 using eShop.BasketApi.Models;
 using eShop.BasketApi.Requests;
@@ -20,12 +21,12 @@ namespace eShop.BasketApi.Controllers;
 public class BasketController : ControllerBase
 {
     private readonly IDistributedCache _cache;
-    private readonly BasketCheckoutEventService _basketCheckoutEventService;
+    private readonly BasketCheckoutEventPublisher _basketCheckoutEventPublisher;
 
-    public BasketController(IDistributedCache cache, BasketCheckoutEventService basketCheckoutEventService)
+    public BasketController(IDistributedCache cache, BasketCheckoutEventPublisher basketCheckoutEventPublisher)
     {
         _cache = cache;
-        _basketCheckoutEventService = basketCheckoutEventService;
+        _basketCheckoutEventPublisher = basketCheckoutEventPublisher;
     }
 
     [HttpGet("GetBasket")]
@@ -133,7 +134,7 @@ public class BasketController : ControllerBase
         };
 
         // Publish checkout basket event
-        _basketCheckoutEventService.Publish(eventMessage);
+        _basketCheckoutEventPublisher.Publish(eventMessage);
 
         return Ok();
     }

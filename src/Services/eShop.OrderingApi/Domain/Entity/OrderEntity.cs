@@ -10,7 +10,7 @@ public class OrderEntity
     {
         UserId = userId;
         DateOfPurchase = DateTime.UtcNow;
-        Status = OrderStatusEnum.Placed;
+        Status = OrderStatusEnum.Processing;
         Products = new List<Product>();
     }
 
