@@ -1,5 +1,4 @@
 using eShop.OrderingApi.Application.GetOrders;
-using eShop.OrderingApi.Application.PlaceOrder;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

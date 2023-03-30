@@ -7,20 +7,20 @@ using System.Text;
 
 namespace eShop.OrderingApi.Events.Publishers;
 
-public class OrderPlacedEventPublisher : IEventPublisher<OrderPlacedEventMessage>
+public class OrderCreatedEventPublisher : IEventPublisher<OrderCreatedEventMessage>
 {
-    private const string EXCHANGENAME = "orderPlacedExchange";
-    private const string ROUTINGKEY = "orderPlacedRoutingKey";
-    private const string QUEUENAME = "orderPlacedQueue";
+    private const string EXCHANGENAME = "orderCreatedExchange";
+    private const string ROUTINGKEY = "orderCreatedRoutingKey";
+    private const string QUEUENAME = "orderCreatedQueue";
 
     private readonly IMessageBus _messageBus;
 
-    public OrderPlacedEventPublisher(IMessageBus messageBus)
+    public OrderCreatedEventPublisher(IMessageBus messageBus)
     {
         _messageBus = messageBus;
     }
 
-    public void Publish(OrderPlacedEventMessage eventMessage)
+    public void Publish(OrderCreatedEventMessage eventMessage)
     {
         using (var connection = _messageBus.GetConnection())
         using (var channel = _messageBus.GetChannel(connection))
@@ -36,4 +36,3 @@ public class OrderPlacedEventPublisher : IEventPublisher<OrderPlacedEventMessage
         }
     }
 }
-

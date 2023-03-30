@@ -44,7 +44,7 @@ public class OrderPlacedEventConsumer : IHostedService
                         var body = ea.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
 
-                        OrderPlacedEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<OrderPlacedEventMessage>(message);
+                        OrderCreatedEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<OrderCreatedEventMessage>(message);
 
                         var subtractFromStockComand = new SubtractFromStockCommand()
                         {

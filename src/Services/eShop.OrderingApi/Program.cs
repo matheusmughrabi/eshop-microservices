@@ -1,6 +1,6 @@
 using eShop.EventBus.Configuration;
 using eShop.EventBus.Implementation;
-using eShop.OrderingApi.Application.PlaceOrder;
+using eShop.OrderingApi.Application.CreateOrder;
 using eShop.OrderingApi.DIContainer;
 using eShop.OrderingApi.Events.Consumers;
 using eShop.OrderingApi.Events.EventConsumers;
@@ -18,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<PlaceOrderCommandValidator>();
+builder.Services.AddScoped<CreateOrderCommandValidator>();
 builder.Services.RegisterAuthentication(builder.Configuration);
 
 builder.Services.AddScoped<IMongoClient>(c =>
@@ -57,7 +57,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddSingleton<IMessageBus, RabbitMessageBus>();
 builder.Services.AddHostedService<BasketCheckoutEventConsumer>();
-builder.Services.AddHostedService<ProductsSubtractedFromStockEventConsumer>();
+builder.Services.AddHostedService<StockValidatedEventConsumer>();
+builder.Services.AddScoped<OrderCreatedEventPublisher>();
 builder.Services.AddScoped<OrderPlacedEventPublisher>();
 
 var app = builder.Build();

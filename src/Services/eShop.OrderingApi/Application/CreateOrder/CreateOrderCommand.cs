@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using System.Text.Json.Serialization;
 
-namespace eShop.OrderingApi.Application.PlaceOrder;
+namespace eShop.OrderingApi.Application.CreateOrder;
 
-public class PlaceOrderCommand : IRequest<PlaceOrderCommandResult>
+public class CreateOrderCommand : IRequest<CreateOrderCommandResult>
 {
     public string? UserId { get; set; }
     public List<Product> Products { get; set; }

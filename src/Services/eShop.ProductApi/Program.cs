@@ -64,8 +64,9 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddSingleton<IMessageBus, RabbitMessageBus>();
+builder.Services.AddHostedService<OrderCreatedEventConsumer>();
+builder.Services.AddScoped<StockValidatedEventPublisher>();
 builder.Services.AddHostedService<OrderPlacedEventConsumer>();
-builder.Services.AddScoped<ProductsSubtractedFromStockEventPublisher>();
 
 var app = builder.Build();
 

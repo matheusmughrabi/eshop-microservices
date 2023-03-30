@@ -19,9 +19,13 @@ public class OrderRepository : IOrderRepository
         _orderCollection = db.GetCollection<OrderEntity>(collectionName);
     }
 
-    public Task<OrderEntity> GetByOrderIdAsync(string orderId)
+    public async Task<OrderEntity> GetByOrderIdAsync(string orderId)
     {
-        throw new NotImplementedException();
+        var filter = Builders<OrderEntity>.Filter.Eq(c => c.Id, orderId);
+
+        var order = await _orderCollection.Find(filter).FirstOrDefaultAsync();
+
+        return order;
     }
 
     public async Task<List<OrderEntity>> GetByUserIdAsync(string userId)

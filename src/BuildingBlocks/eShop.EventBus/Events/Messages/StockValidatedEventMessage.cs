@@ -2,7 +2,7 @@
 
 namespace eShop.EventBus.Events.Messages;
 
-public class ProductsSubtractedFromStockEventMessage : IEventMessage
+public class StockValidatedEventMessage : IEventMessage
 {
     public bool Success { get; set; }
     public string OrderId { get; set; }

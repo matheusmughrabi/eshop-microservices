@@ -1,24 +1,23 @@
-﻿using eShop.EventBus.Events.Base;
+﻿using eShop.EventBus.Events.Messages;
 using eShop.EventBus.Implementation;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
+using eShop.ProductApi.Features.Product;
 using MediatR;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
-using eShop.OrderingApi.Application.UpdateOrderStatus;
-using eShop.EventBus.Events.Messages;
 
 namespace eShop.OrderingApi.Events.Consumers;
 
-public class ProductsSubtractedFromStockEventConsumer : IHostedService
+public class OrderCreatedEventConsumer : IHostedService
 {
-    private const string EXCHANGENAME = "productsSubtractedFromStockExchange";
-    private const string ROUTINGKEY = "productsSubtractedFromStockRoutingKey";
-    private const string QUEUENAME = "productsSubtractedFromStockQueue";
+    private const string EXCHANGENAME = "orderCreatedExchange";
+    private const string ROUTINGKEY = "orderCreatedRoutingKey";
+    private const string QUEUENAME = "orderCreatedQueue";
 
     private readonly IMessageBus _messageBus;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public ProductsSubtractedFromStockEventConsumer(IMessageBus messageBus, IServiceScopeFactory serviceScopeFactory)
+    public OrderCreatedEventConsumer(IMessageBus messageBus, IServiceScopeFactory serviceScopeFactory)
     {
         _messageBus = messageBus;
         _serviceScopeFactory = serviceScopeFactory;
@@ -45,21 +44,19 @@ public class ProductsSubtractedFromStockEventConsumer : IHostedService
                         var body = ea.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
 
-                        ProductsSubtractedFromStockEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<ProductsSubtractedFromStockEventMessage>(message);
+                        OrderCreatedEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<OrderCreatedEventMessage>(message);
 
-                        var command = new UpdateOrderStatusCommand();
-                        command.Id = eventMessageObject.OrderId;
-
-                        if (eventMessageObject.Success)
+                        var checkStockCommand = new CheckStockCommand()
                         {
-                            command.Status = Domain.Enums.OrderStatusEnum.Placed;
-                        }
-                        else
-                        {
-                            command.Status = Domain.Enums.OrderStatusEnum.Invalid;
-                        }
+                            OrderId = eventMessageObject.OrderId,
+                            Products = eventMessageObject.Products.Select(c => new CheckStockCommand.Product()
+                            {
+                                Id = Guid.Parse(c.Id),
+                                Quantity = c.Quantity
+                            }).ToList()
+                        };
                         
-                        var response = await scopedMediator.Send(command);
+                        var response = await scopedMediator.Send(checkStockCommand);
                     }
                 };
 

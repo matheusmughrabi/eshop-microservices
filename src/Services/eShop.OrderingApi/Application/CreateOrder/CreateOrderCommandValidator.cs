@@ -1,10 +1,10 @@
 ﻿using eShop.OrderingApi.Application.Utils;
 
-namespace eShop.OrderingApi.Application.PlaceOrder;
+namespace eShop.OrderingApi.Application.CreateOrder;
 
-public class PlaceOrderCommandValidator : ICommandValidator<PlaceOrderCommand, PlaceOrderCommandResult>
+public class CreateOrderCommandValidator : ICommandValidator<CreateOrderCommand, CreateOrderCommandResult>
 {
-    public ValidationResult Validate(PlaceOrderCommand command)
+    public ValidationResult Validate(CreateOrderCommand command)
     {
         var validationResult = new ValidationResult();
 

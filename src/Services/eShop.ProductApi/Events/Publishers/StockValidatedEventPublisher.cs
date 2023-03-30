@@ -7,20 +7,20 @@ using System.Text;
 
 namespace eShop.ProductApi.Events.Publishers;
 
-public class ProductsSubtractedFromStockEventPublisher : IEventPublisher<ProductsSubtractedFromStockEventMessage>
+public class StockValidatedEventPublisher : IEventPublisher<StockValidatedEventMessage>
 {
-    private const string EXCHANGENAME = "productsSubtractedFromStockExchange";
-    private const string ROUTINGKEY = "productsSubtractedFromStockRoutingKey";
-    private const string QUEUENAME = "productsSubtractedFromStockQueue";
+    private const string EXCHANGENAME = "stockValidatedExchange";
+    private const string ROUTINGKEY = "stockValidatedRoutingKey";
+    private const string QUEUENAME = "stockValidatedQueue";
 
     private readonly IMessageBus _messageBus;
 
-    public ProductsSubtractedFromStockEventPublisher(IMessageBus messageBus)
+    public StockValidatedEventPublisher(IMessageBus messageBus)
     {
         _messageBus = messageBus;
     }
 
-    public void Publish(ProductsSubtractedFromStockEventMessage eventMessage)
+    public void Publish(StockValidatedEventMessage eventMessage)
     {
         using (var connection = _messageBus.GetConnection())
         using (var channel = _messageBus.GetChannel(connection))
