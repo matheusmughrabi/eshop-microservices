@@ -13,6 +13,7 @@ public class OrderViewModel
         public OrderStatusEnum Status { get; set; }
         public string StatusDescription { get; set; }
         public List<Product> Products { get; set; }
+        public List<Notification> Notifications { get; set; }
 
         public decimal CalculateTotal()
         {
@@ -27,5 +28,10 @@ public class OrderViewModel
         public decimal PriceAtPurchase { get; set; }
         public int Quantity { get; set; }
         public string ImagePath { get; set; }
+    }
+
+    public class Notification
+    {
+        public string Description { get; set; }
     }
 }

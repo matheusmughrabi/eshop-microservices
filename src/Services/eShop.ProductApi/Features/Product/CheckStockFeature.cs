@@ -51,33 +51,30 @@ public class CheckStockCommandHandler : IRequestHandler<CheckStockCommand, Check
             return response;
 
         var productsFromDb = await _productDbContext.Product
+            .AsNoTracking()
             .Where(product => request.Products.Select(c => c.Id).Contains(product.Id))
             .ToListAsync();
 
-        var productsWithNotEnoughQuantity = new List<Guid>();
+        var productsWithNotEnoughQuantity = new List<Entity.ProductEntity>();
         foreach (var product in productsFromDb)
         {
             var quantity = request.Products.FirstOrDefault(c => c.Id == product.Id).Quantity;
 
             if (product.QuantityOnHand < quantity)
             {
-                productsWithNotEnoughQuantity.Add(product.Id);
+                productsWithNotEnoughQuantity.Add(product);
                 continue;
             }
-
-            //product.SubtractStock(quantity);
         }
-
-        //if (productsWithNotEnoughQuantity.Count == 0)
-        //    await _productDbContext.SaveChangesAsync();
 
         _stockValidatedPublisher.Publish(new EventBus.Events.Messages.StockValidatedEventMessage()
         {
             Success = productsWithNotEnoughQuantity.Count == 0,
             OrderId = request.OrderId,
-            UnderstockedProducts = productsWithNotEnoughQuantity.Select(id => new EventBus.Events.Messages.StockValidatedEventMessage.Product()
+            UnderstockedProducts = productsWithNotEnoughQuantity.Select(product => new EventBus.Events.Messages.StockValidatedEventMessage.Product()
             {
-                Id = id
+                Id = product.Id,
+                Name = product.Name
             }).ToList()
         });
 

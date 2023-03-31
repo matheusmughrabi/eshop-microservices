@@ -19,8 +19,9 @@ public class OrderEntity
     public string Id { get; private set; }
     public string UserId { get; private set; }
     public DateTime DateOfPurchase { get; private set; }
-    public OrderStatusEnum Status { get; private set; }
+    public OrderStatusEnum Status { get; set; }
     public List<Product> Products { get; private set; }
+    public List<Notification> Notifications { get; private set; }
 
     public void AddProduct(Product product)
     {
@@ -28,6 +29,20 @@ public class OrderEntity
             throw new ArgumentNullException(nameof(product));
 
         Products.Add(product);
+    }
+
+    public void AddNotification(Notification notification)
+    {
+        if (notification is null)
+            throw new ArgumentNullException(nameof(notification));
+
+        if (string.IsNullOrEmpty(notification.Description))
+            throw new Exception("Description cannot be null or empty");
+
+        if (Notifications is null)
+            Notifications = new List<Notification>();
+
+        Notifications.Add(notification);
     }
 
     public class Product
@@ -59,5 +74,10 @@ public class OrderEntity
         public decimal PriceAtPurchase { get; private set; }
         public int Quantity { get; private set; }
         public string? ImagePath { get; private set; }
+    }
+
+    public class Notification
+    {
+        public string Description { get; set; }
     }
 }

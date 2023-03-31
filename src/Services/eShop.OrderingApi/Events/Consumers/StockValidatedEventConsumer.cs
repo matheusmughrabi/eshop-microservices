@@ -1,11 +1,10 @@
-﻿using eShop.EventBus.Events.Base;
+﻿using eShop.EventBus.Events.Messages;
 using eShop.EventBus.Implementation;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
+using eShop.OrderingApi.Application.UpdateOrder;
 using MediatR;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
-using eShop.OrderingApi.Application.UpdateOrderStatus;
-using eShop.EventBus.Events.Messages;
 
 namespace eShop.OrderingApi.Events.Consumers;
 
@@ -47,7 +46,7 @@ public class StockValidatedEventConsumer : IHostedService
 
                         StockValidatedEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<StockValidatedEventMessage>(message);
 
-                        var command = new UpdateOrderStatusCommand();
+                        var command = new UpdateOrderCommand();
                         command.Id = eventMessageObject.OrderId;
 
                         if (eventMessageObject.Success)
@@ -57,6 +56,13 @@ public class StockValidatedEventConsumer : IHostedService
                         else
                         {
                             command.Status = Domain.Enums.OrderStatusEnum.Invalid;
+
+                            command.Notifications = new List<UpdateOrderCommand.Notification>();
+                            foreach (var product in eventMessageObject.UnderstockedProducts)
+                            {
+                                command.Notifications.Add(new UpdateOrderCommand.Notification() { Description = $"Not enough stock of product {product.Name} for this order" });
+                            }
+
                         }
                         
                         var response = await scopedMediator.Send(command);

@@ -39,6 +39,10 @@ public class OrderController : Controller
                     Quantity = p.Quantity,
                     PriceAtPurchase = p.PriceAtPurchase,
                     ImagePath = p.ImagePath
+                }).ToList(),
+                Notifications = c.Notifications?.Select(p => new OrderViewModel.Notification()
+                {
+                    Description = p.Description
                 }).ToList()
             }).ToList()
         };

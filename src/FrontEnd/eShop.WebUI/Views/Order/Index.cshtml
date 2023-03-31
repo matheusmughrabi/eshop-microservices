@@ -27,8 +27,17 @@
                         <div class="d-flex justify-content-end">
                             <p>Total: @order.CalculateTotal().ToString("C", CultureInfo.CurrentCulture)</p>
                         </div>
-                        
 
+                        @if (order.Notifications is not null && order.Notifications.Count > 0)
+                        {
+                            <div>
+                                @foreach (var notification in order.Notifications)
+                                {
+                                    <p>@notification.Description</p>
+                                }
+                            </div>
+                        }
+                        
                     </div>
                 </div>
             </div>

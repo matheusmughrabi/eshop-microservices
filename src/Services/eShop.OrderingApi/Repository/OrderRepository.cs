@@ -45,11 +45,10 @@ public class OrderRepository : IOrderRepository
         await _orderCollection.InsertOneAsync(entity);
     }
 
-    public async Task<bool> UpdateStatus(string id, OrderStatusEnum status)
+    public async Task<bool> Update(OrderEntity entity)
     {
-        var filter = Builders<OrderEntity>.Filter.Eq(c => c.Id, id);
-        var update = Builders<OrderEntity>.Update.Set(c => c.Status, status);
-        var result = await _orderCollection.UpdateOneAsync(filter, update);
+        var filter = Builders<OrderEntity>.Filter.Eq(c => c.Id, entity.Id);
+        var result = await _orderCollection.ReplaceOneAsync(filter, entity);
 
         return result.ModifiedCount > 0;
     }

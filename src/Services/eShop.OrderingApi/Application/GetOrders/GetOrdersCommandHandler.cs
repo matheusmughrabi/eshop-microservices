@@ -25,6 +25,7 @@ public class GetOrdersCommandHandler : IRequestHandler<GetOrdersCommand, GetOrde
                 DateOfPurchase = c.DateOfPurchase,
                 Status = c.Status,
                 StatusDescription = c.Status.ToDescription(),
+
                 Products = c.Products.Select(p => new GetOrdersCommandResult.Product
                 {
                     Id = p.Id,
@@ -32,7 +33,13 @@ public class GetOrdersCommandHandler : IRequestHandler<GetOrdersCommand, GetOrde
                     PriceAtPurchase = p.PriceAtPurchase,
                     Quantity = p.Quantity,
                     ImagePath = p.ImagePath
+                }).ToList(),
+
+                Notifications = c.Notifications?.Select(p => new GetOrdersCommandResult.Notification()
+                {
+                    Description = p.Description
                 }).ToList()
+
             }).ToList()
         };
     }
