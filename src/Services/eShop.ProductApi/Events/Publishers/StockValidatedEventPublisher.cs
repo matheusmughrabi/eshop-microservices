@@ -1,17 +1,17 @@
-﻿using eShop.EventBus.Events.Base;
-using eShop.EventBus.Events.Messages;
-using eShop.EventBus.Implementation;
+﻿using eShop.EventBus.Implementation;
 using RabbitMQ.Client;
 using System.Text.Json;
 using System.Text;
+using eShop.EventBus.Base;
+using eShop.EventBus.Messages;
+using eShop.EventBus.Constants;
 
 namespace eShop.ProductApi.Events.Publishers;
 
 public class StockValidatedEventPublisher : IEventPublisher<StockValidatedEventMessage>
 {
-    private const string EXCHANGENAME = "stockValidatedExchange";
-    private const string ROUTINGKEY = "stockValidatedRoutingKey";
-    private const string QUEUENAME = "stockValidatedQueue";
+    private const string EXCHANGENAME = ExchangeConstants.OrderExchange;
+    private const string ROUTINGKEY = RoutingKeysConstants.Order_StockValidated;
 
     private readonly IMessageBus _messageBus;
 
@@ -26,13 +26,14 @@ public class StockValidatedEventPublisher : IEventPublisher<StockValidatedEventM
         using (var channel = _messageBus.GetChannel(connection))
         {
             channel.ExchangeDeclare(exchange: EXCHANGENAME, type: ExchangeType.Direct, durable: true, autoDelete: false);
-            channel.QueueDeclare(queue: QUEUENAME, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            channel.QueueBind(queue: QUEUENAME, exchange: EXCHANGENAME, routingKey: ROUTINGKEY);
 
             var jsonMessage = JsonSerializer.Serialize(eventMessage);
             var body = Encoding.UTF8.GetBytes(jsonMessage);
 
-            channel.BasicPublish(exchange: EXCHANGENAME, routingKey: ROUTINGKEY, basicProperties: null, body: body);
+            var properties = channel.CreateBasicProperties();
+            properties.Persistent = true;
+
+            channel.BasicPublish(exchange: EXCHANGENAME, routingKey: ROUTINGKEY, basicProperties: properties, body: body);
         }
     }
 }

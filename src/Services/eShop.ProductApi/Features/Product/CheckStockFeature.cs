@@ -1,4 +1,5 @@
-﻿using eShop.ProductApi.DataAccess;
+﻿using eShop.EventBus.Messages;
+using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.Events.Publishers;
 using eShop.ProductApi.Notifications;
 using MediatR;
@@ -67,11 +68,11 @@ public class CheckStockCommandHandler : IRequestHandler<CheckStockCommand, Check
             }
         }
 
-        _stockValidatedPublisher.Publish(new EventBus.Events.Messages.StockValidatedEventMessage()
+        _stockValidatedPublisher.Publish(new EventBus.Messages.StockValidatedEventMessage()
         {
             Success = productsWithNotEnoughQuantity.Count == 0,
             OrderId = request.OrderId,
-            UnderstockedProducts = productsWithNotEnoughQuantity.Select(product => new EventBus.Events.Messages.StockValidatedEventMessage.Product()
+            UnderstockedProducts = productsWithNotEnoughQuantity.Select(product => new StockValidatedEventMessage.Product()
             {
                 Id = product.Id,
                 Name = product.Name

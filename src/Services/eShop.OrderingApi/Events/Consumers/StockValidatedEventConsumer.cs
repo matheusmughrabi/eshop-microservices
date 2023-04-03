@@ -1,6 +1,8 @@
-﻿using eShop.EventBus.Events.Messages;
+﻿using eShop.EventBus.Constants;
 using eShop.EventBus.Implementation;
+using eShop.EventBus.Messages;
 using eShop.OrderingApi.Application.UpdateOrder;
+using eShop.OrderingApi.Events.Constants;
 using MediatR;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -10,9 +12,9 @@ namespace eShop.OrderingApi.Events.Consumers;
 
 public class StockValidatedEventConsumer : IHostedService
 {
-    private const string EXCHANGENAME = "stockValidatedExchange";
-    private const string ROUTINGKEY = "stockValidatedRoutingKey";
-    private const string QUEUENAME = "stockValidatedQueue";
+    private const string EXCHANGENAME = ExchangeConstants.OrderExchange;
+    private const string ROUTINGKEY = RoutingKeysConstants.Order_StockValidated;
+    private const string QUEUENAME = QueueConstants.StockValidated;
 
     private readonly IMessageBus _messageBus;
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -66,11 +68,13 @@ public class StockValidatedEventConsumer : IHostedService
                         }
                         
                         var response = await scopedMediator.Send(command);
+
+                        channel.BasicAck(ea.DeliveryTag, false);
                     }
                 };
 
                 channel.BasicConsume(queue: QUEUENAME,
-                                     autoAck: true,
+                                     autoAck: false,
                                      consumer: consumer);
 
                 while (!cancellationToken.IsCancellationRequested)

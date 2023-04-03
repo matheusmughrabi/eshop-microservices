@@ -1,4 +1,4 @@
-﻿namespace eShop.EventBus.Events.Base;
+﻿namespace eShop.EventBus.Base;
 
 internal interface IEventService<TEventMessage> where TEventMessage : IEventMessage
 {

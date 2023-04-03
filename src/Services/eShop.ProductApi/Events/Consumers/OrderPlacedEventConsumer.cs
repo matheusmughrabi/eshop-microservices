@@ -1,5 +1,7 @@
-﻿using eShop.EventBus.Events.Messages;
+﻿using eShop.EventBus.Constants;
 using eShop.EventBus.Implementation;
+using eShop.EventBus.Messages;
+using eShop.ProductApi.Events.Constants;
 using eShop.ProductApi.Features.Product;
 using MediatR;
 using RabbitMQ.Client;
@@ -10,9 +12,9 @@ namespace eShop.OrderingApi.Events.Consumers;
 
 public class OrderPlacedEventConsumer : IHostedService
 {
-    private const string EXCHANGENAME = "orderPlacedExchange";
-    private const string ROUTINGKEY = "orderPlacedRoutingKey";
-    private const string QUEUENAME = "orderPlacedQueue";
+    private const string EXCHANGENAME = ExchangeConstants.OrderExchange;
+    private const string ROUTINGKEY = RoutingKeysConstants.OrderPlaced;
+    private const string QUEUENAME = QueueConstants.OrderPlaced;
 
     private readonly IMessageBus _messageBus;
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -44,7 +46,7 @@ public class OrderPlacedEventConsumer : IHostedService
                         var body = ea.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
 
-                        OrderCreatedEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<OrderCreatedEventMessage>(message);
+                        OrderPlacedEventMessage eventMessageObject = System.Text.Json.JsonSerializer.Deserialize<OrderPlacedEventMessage>(message);
 
                         var subtractFromStockComand = new SubtractFromStockCommand()
                         {
@@ -57,11 +59,13 @@ public class OrderPlacedEventConsumer : IHostedService
                         };
                         
                         var response = await scopedMediator.Send(subtractFromStockComand);
+
+                        channel.BasicAck(ea.DeliveryTag, false);
                     }
                 };
 
                 channel.BasicConsume(queue: QUEUENAME,
-                                     autoAck: true,
+                                     autoAck: false,
                                      consumer: consumer);
 
                 while (!cancellationToken.IsCancellationRequested)

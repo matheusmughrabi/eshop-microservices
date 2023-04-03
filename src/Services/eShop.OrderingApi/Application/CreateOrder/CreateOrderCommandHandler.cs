@@ -1,4 +1,5 @@
-﻿using eShop.OrderingApi.Entity;
+﻿using eShop.EventBus.Messages;
+using eShop.OrderingApi.Entity;
 using eShop.OrderingApi.Events.Publishers;
 using eShop.OrderingApi.Repository;
 using MediatR;
@@ -9,12 +10,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
 {
     private readonly IOrderRepository _orderRepository;
     private readonly CreateOrderCommandValidator _createOrderCommandValidator;
-    private readonly OrderCreatedEventPublisher _orderCreatedEventPublisher;
+    private readonly CheckStockCommandPublisher _orderCreatedEventPublisher;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
         CreateOrderCommandValidator createOrderCommandValidator,
-        OrderCreatedEventPublisher orderCreatedEventPublisher)
+        CheckStockCommandPublisher orderCreatedEventPublisher)
     {
         _orderRepository = orderRepository;
         _createOrderCommandValidator = createOrderCommandValidator;
@@ -53,12 +54,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Cre
         return orderEntity;
     }
 
-    private EventBus.Events.Messages.OrderCreatedEventMessage BuildOrderPlacedEventMessage(OrderEntity orderEntity)
+    private CheckStockCommandMessage BuildOrderPlacedEventMessage(OrderEntity orderEntity)
     {
-        return new EventBus.Events.Messages.OrderCreatedEventMessage()
+        return new EventBus.Messages.CheckStockCommandMessage()
         {
             OrderId = orderEntity.Id,
-            Products = orderEntity.Products.Select(product => new EventBus.Events.Messages.OrderCreatedEventMessage.Product()
+            Products = orderEntity.Products.Select(product => new CheckStockCommandMessage.Product()
             {
                 Id = product.Id,
                 Quantity = product.Quantity

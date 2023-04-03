@@ -1,6 +1,6 @@
-﻿using eShop.EventBus.Events.Base;
+﻿using eShop.EventBus.Base;
 
-namespace eShop.EventBus.Events.Messages;
+namespace eShop.EventBus.Messages;
 
 public class StockValidatedEventMessage : IEventMessage
 {

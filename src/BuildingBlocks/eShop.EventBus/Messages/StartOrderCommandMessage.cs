@@ -1,8 +1,8 @@
-﻿using eShop.EventBus.Events.Base;
+﻿using eShop.EventBus.Base;
 
-namespace eShop.EventBus.Events.BasketCheckout;
+namespace eShop.EventBus.Messages;
 
-public class BasketCheckoutEventMessage : IEventMessage
+public class StartOrderCommandMessage : IEventMessage
 {
     public string? UserId { get; set; }
     public List<Product> Products { get; set; }

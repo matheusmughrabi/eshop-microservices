@@ -3,8 +3,8 @@ using eShop.BasketApi.Events.Publishers;
 using eShop.BasketApi.Extensions;
 using eShop.BasketApi.Models;
 using eShop.BasketApi.Requests;
-using eShop.EventBus.Events.BasketCheckout;
 using eShop.EventBus.Implementation;
+using eShop.EventBus.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -21,9 +21,9 @@ namespace eShop.BasketApi.Controllers;
 public class BasketController : ControllerBase
 {
     private readonly IDistributedCache _cache;
-    private readonly BasketCheckoutEventPublisher _basketCheckoutEventPublisher;
+    private readonly StartOrderCommandPublisher _basketCheckoutEventPublisher;
 
-    public BasketController(IDistributedCache cache, BasketCheckoutEventPublisher basketCheckoutEventPublisher)
+    public BasketController(IDistributedCache cache, StartOrderCommandPublisher basketCheckoutEventPublisher)
     {
         _cache = cache;
         _basketCheckoutEventPublisher = basketCheckoutEventPublisher;
@@ -120,10 +120,10 @@ public class BasketController : ControllerBase
         // Clear basket
         await _cache.RemoveAsync(recordId);
 
-        var eventMessage = new BasketCheckoutEventMessage()
+        var eventMessage = new StartOrderCommandMessage()
         {
             UserId = User.Identity.Name,
-            Products = basket.Items.Select(item => new BasketCheckoutEventMessage.Product()
+            Products = basket.Items.Select(item => new StartOrderCommandMessage.Product()
             {
                 Id = item.Id.ToString(),
                 Name = item.Name,

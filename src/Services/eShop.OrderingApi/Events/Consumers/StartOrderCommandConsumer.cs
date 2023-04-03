@@ -1,5 +1,8 @@
-﻿using eShop.EventBus.Implementation;
+﻿using eShop.EventBus.Constants;
+using eShop.EventBus.Implementation;
+using eShop.EventBus.Messages;
 using eShop.OrderingApi.Application.CreateOrder;
+using eShop.OrderingApi.Events.Constants;
 using MediatR;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -7,16 +10,16 @@ using System.Text;
 
 namespace eShop.OrderingApi.Events.EventConsumers;
 
-public class BasketCheckoutEventConsumer : IHostedService
+public class StartOrderCommandConsumer : IHostedService
 {
-    private const string EXCHANGENAME = "basketCheckoutExchange";
-    private const string ROUTINGKEY = "basketCheckoutRoutingKey";
-    private const string QUEUENAME = "basketCheckoutQueue";
+    private const string EXCHANGENAME = ExchangeConstants.OrderExchange;
+    private const string ROUTINGKEY = RoutingKeysConstants.StartOrder;
+    private const string QUEUENAME = QueueConstants.StartOrder;
 
     private readonly IMessageBus _messageBus;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public BasketCheckoutEventConsumer(IMessageBus messageBus, IServiceScopeFactory serviceScopeFactory)
+    public StartOrderCommandConsumer(IMessageBus messageBus, IServiceScopeFactory serviceScopeFactory)
     {
         _messageBus = messageBus;
         _serviceScopeFactory = serviceScopeFactory;
@@ -43,13 +46,29 @@ public class BasketCheckoutEventConsumer : IHostedService
                         var body = ea.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
 
-                        CreateOrderCommand placeOrderCommand = System.Text.Json.JsonSerializer.Deserialize<CreateOrderCommand>(message);
-                        var response = await scopedMediator.Send(placeOrderCommand);
+                        StartOrderCommandMessage startOrderCommandMessage = System.Text.Json.JsonSerializer.Deserialize<StartOrderCommandMessage>(message);
+
+                        var createOrderCommand = new CreateOrderCommand()
+                        {
+                            UserId = startOrderCommandMessage.UserId,
+                            Products = startOrderCommandMessage.Products.Select(product => new CreateOrderCommand.Product()
+                            {
+                                Id = product.Id,
+                                ImagePath = product.ImagePath,
+                                Name = product.Name,
+                                PriceAtPurchase = product.PriceAtPurchase,
+                                Quantity = product.Quantity
+                            }).ToList()
+                        };
+                        
+                        var response = await scopedMediator.Send(createOrderCommand);
+
+                        channel.BasicAck(ea.DeliveryTag, false);
                     }
                 };
 
                 channel.BasicConsume(queue: QUEUENAME,
-                                     autoAck: true,
+                                     autoAck: false,
                                      consumer: consumer);
 
                 while (!cancellationToken.IsCancellationRequested)

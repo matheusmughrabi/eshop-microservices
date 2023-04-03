@@ -8,19 +8,19 @@ using eShop.EventBus.Constants;
 
 namespace eShop.OrderingApi.Events.Publishers;
 
-public class OrderPlacedEventPublisher : IEventPublisher<OrderPlacedEventMessage>
+public class CheckStockCommandPublisher : IEventPublisher<CheckStockCommandMessage>
 {
     private const string EXCHANGENAME = ExchangeConstants.OrderExchange;
-    private const string ROUTINGKEY = RoutingKeysConstants.OrderPlaced;
+    private const string ROUTINGKEY = RoutingKeysConstants.CheckStock;
 
     private readonly IMessageBus _messageBus;
 
-    public OrderPlacedEventPublisher(IMessageBus messageBus)
+    public CheckStockCommandPublisher(IMessageBus messageBus)
     {
         _messageBus = messageBus;
     }
 
-    public void Publish(OrderPlacedEventMessage eventMessage)
+    public void Publish(CheckStockCommandMessage eventMessage)
     {
         using (var connection = _messageBus.GetConnection())
         using (var channel = _messageBus.GetChannel(connection))
@@ -37,4 +37,3 @@ public class OrderPlacedEventPublisher : IEventPublisher<OrderPlacedEventMessage
         }
     }
 }
-

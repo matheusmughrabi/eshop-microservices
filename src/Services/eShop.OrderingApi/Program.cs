@@ -56,9 +56,9 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddSingleton<IMessageBus, RabbitMessageBus>();
-builder.Services.AddHostedService<BasketCheckoutEventConsumer>();
+builder.Services.AddHostedService<StartOrderCommandConsumer>();
 builder.Services.AddHostedService<StockValidatedEventConsumer>();
-builder.Services.AddScoped<OrderCreatedEventPublisher>();
+builder.Services.AddScoped<CheckStockCommandPublisher>();
 builder.Services.AddScoped<OrderPlacedEventPublisher>();
 
 var app = builder.Build();

@@ -1,4 +1,5 @@
-﻿using eShop.OrderingApi.Events.Publishers;
+﻿using eShop.EventBus.Messages;
+using eShop.OrderingApi.Events.Publishers;
 using eShop.OrderingApi.Repository;
 using MediatR;
 
@@ -20,7 +21,7 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, boo
         var order = await _orderRepository.GetByOrderIdAsync(request.Id);
         order.Status = request.Status;
 
-        if (request.Notifications.Count > 0)
+        if (request.Notifications?.Count > 0)
         {
             foreach (var notification in request.Notifications)
             {
@@ -32,10 +33,10 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, boo
 
         if (request.Status == Domain.Enums.OrderStatusEnum.Placed)
         {
-            _orderPlacedEventPublisher.Publish(new EventBus.Events.Messages.OrderPlacedEventMessage()
+            _orderPlacedEventPublisher.Publish(new EventBus.Messages.OrderPlacedEventMessage()
             {
                 OrderId = request.Id,
-                Products = order.Products.Select(c => new EventBus.Events.Messages.OrderPlacedEventMessage.Product()
+                Products = order.Products.Select(c => new OrderPlacedEventMessage.Product()
                 {
                     Id = c.Id,
                     Quantity = c.Quantity

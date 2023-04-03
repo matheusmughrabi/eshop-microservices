@@ -1,4 +1,4 @@
-﻿namespace eShop.EventBus.Events.Base;
+﻿namespace eShop.EventBus.Base;
 
 public interface IEventConsumer
 {

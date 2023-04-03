@@ -6,21 +6,21 @@ using eShop.EventBus.Base;
 using eShop.EventBus.Messages;
 using eShop.EventBus.Constants;
 
-namespace eShop.OrderingApi.Events.Publishers;
+namespace eShop.BasketApi.Events.Publishers;
 
-public class OrderPlacedEventPublisher : IEventPublisher<OrderPlacedEventMessage>
+public class StartOrderCommandPublisher : IEventPublisher<StartOrderCommandMessage>
 {
     private const string EXCHANGENAME = ExchangeConstants.OrderExchange;
-    private const string ROUTINGKEY = RoutingKeysConstants.OrderPlaced;
+    private const string ROUTINGKEY = RoutingKeysConstants.StartOrder;
 
     private readonly IMessageBus _messageBus;
 
-    public OrderPlacedEventPublisher(IMessageBus messageBus)
+    public StartOrderCommandPublisher(IMessageBus messageBus)
     {
         _messageBus = messageBus;
     }
 
-    public void Publish(OrderPlacedEventMessage eventMessage)
+    public void Publish(StartOrderCommandMessage eventMessage)
     {
         using (var connection = _messageBus.GetConnection())
         using (var channel = _messageBus.GetChannel(connection))
@@ -37,4 +37,3 @@ public class OrderPlacedEventPublisher : IEventPublisher<OrderPlacedEventMessage
         }
     }
 }
-
