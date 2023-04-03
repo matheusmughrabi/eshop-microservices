@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace eShop.ProductApi.Exceptions
+namespace eShop.ProductApi.Domain.Exceptions
 {
     public class DuplicateProductException : Exception
     {

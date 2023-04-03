@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace eShop.AdminUI.Container.Exceptions
+namespace eShop.AdminUI.DIContainer.Exceptions
 {
     public class KeyNotFoundException : Exception
     {

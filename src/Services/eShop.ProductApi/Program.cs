@@ -1,10 +1,10 @@
 using Azure.Storage.Blobs;
 using eShop.EventBus.Configuration;
 using eShop.EventBus.Implementation;
-using eShop.OrderingApi.Events.Consumers;
-using eShop.ProductApi.Configurations;
+using eShop.ProductApi.Configuration;
 using eShop.ProductApi.DataAccess;
 using eShop.ProductApi.DIContainer;
+using eShop.ProductApi.Events.Consumers;
 using eShop.ProductApi.Events.Publishers;
 using eShop.ProductApi.Services.Blob;
 using MediatR;

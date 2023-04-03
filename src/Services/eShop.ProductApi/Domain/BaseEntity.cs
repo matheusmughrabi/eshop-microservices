@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace eShop.ProductApi.Entity
+namespace eShop.ProductApi.Domain
 {
     public abstract class BaseEntity : IEquatable<BaseEntity>
     {
@@ -21,7 +21,7 @@ namespace eShop.ProductApi.Entity
 
         public bool Equals(BaseEntity? other)
         {
-            return Id == other?.Id;    
+            return Id == other?.Id;
         }
     }
 }

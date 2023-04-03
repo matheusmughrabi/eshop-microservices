@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace eShop.OrderingApi.Events.Consumers;
+namespace eShop.ProductApi.Events.Consumers;
 
 public class OrderPlacedEventConsumer : IHostedService
 {
@@ -57,7 +57,7 @@ public class OrderPlacedEventConsumer : IHostedService
                                 Quantity = c.Quantity
                             }).ToList()
                         };
-                        
+
                         var response = await scopedMediator.Send(subtractFromStockComand);
 
                         channel.BasicAck(ea.DeliveryTag, false);

@@ -1,7 +1,6 @@
-﻿using eShop.ProductApi.Domain;
-using eShop.ProductApi.Exceptions;
+﻿using eShop.ProductApi.Domain.Exceptions;
 
-namespace eShop.ProductApi.Entity;
+namespace eShop.ProductApi.Domain;
 
 public class CategoryEntity : BaseEntity
 {

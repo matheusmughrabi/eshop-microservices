@@ -1,4 +1,4 @@
-﻿namespace eShop.AdminUI.Container
+﻿namespace eShop.AdminUI.DIContainer
 {
     public static class RoutingExtensions
     {

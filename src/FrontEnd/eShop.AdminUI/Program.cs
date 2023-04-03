@@ -1,4 +1,3 @@
-using eShop.AdminUI.Container;
 using eShop.AdminUI.DIContainer;
 using System.Net;
 

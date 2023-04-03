@@ -1,10 +1,9 @@
 ﻿using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.Entity;
+using eShop.ProductApi.Domain;
 using eShop.ProductApi.Notifications;
 using eShop.ProductApi.Services.Blob;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

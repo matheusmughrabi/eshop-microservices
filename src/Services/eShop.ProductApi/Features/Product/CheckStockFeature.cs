@@ -1,5 +1,6 @@
 ﻿using eShop.EventBus.Messages;
 using eShop.ProductApi.DataAccess;
+using eShop.ProductApi.Domain;
 using eShop.ProductApi.Events.Publishers;
 using eShop.ProductApi.Notifications;
 using MediatR;
@@ -56,7 +57,7 @@ public class CheckStockCommandHandler : IRequestHandler<CheckStockCommand, Check
             .Where(product => request.Products.Select(c => c.Id).Contains(product.Id))
             .ToListAsync();
 
-        var productsWithNotEnoughQuantity = new List<Entity.ProductEntity>();
+        var productsWithNotEnoughQuantity = new List<ProductEntity>();
         foreach (var product in productsFromDb)
         {
             var quantity = request.Products.FirstOrDefault(c => c.Id == product.Id).Quantity;

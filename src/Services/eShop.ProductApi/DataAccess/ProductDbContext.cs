@@ -1,6 +1,5 @@
 ﻿using eShop.ProductApi.DataAccess.Mappings;
 using eShop.ProductApi.Domain;
-using eShop.ProductApi.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace eShop.ProductApi.DataAccess

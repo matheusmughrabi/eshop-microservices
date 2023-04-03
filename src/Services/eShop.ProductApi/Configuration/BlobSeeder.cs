@@ -1,6 +1,6 @@
 ﻿using eShop.ProductApi.Services.Blob;
 
-namespace eShop.ProductApi.Configurations
+namespace eShop.ProductApi.Configuration
 {
     public static class BlobSeeder
     {

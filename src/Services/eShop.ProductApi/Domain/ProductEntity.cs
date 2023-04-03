@@ -1,6 +1,6 @@
-﻿using eShop.ProductApi.Exceptions;
+﻿using eShop.ProductApi.Domain.Exceptions;
 
-namespace eShop.ProductApi.Entity
+namespace eShop.ProductApi.Domain
 {
     public class ProductEntity : BaseEntity
     {
@@ -16,7 +16,7 @@ namespace eShop.ProductApi.Entity
             Price = price;
             ImagePath = imagePath;
             // When the product has just been created, the quantity on hand is zero
-            QuantityOnHand = 0; 
+            QuantityOnHand = 0;
         }
 
         public string Name { get; private set; }
@@ -44,7 +44,7 @@ namespace eShop.ProductApi.Entity
 
         public void AddStock(int quantity)
         {
-            if(quantity <= 0)
+            if (quantity <= 0)
                 throw new InvalidPropertyValueException("quantity must be greater than zero.");
 
             QuantityOnHand += quantity;
@@ -82,7 +82,7 @@ namespace eShop.ProductApi.Entity
         {
             var other = obj as ProductEntity;
 
-            return Name == other?.Name || Id == other?.Id;    
+            return Name == other?.Name || Id == other?.Id;
         }
     }
 }

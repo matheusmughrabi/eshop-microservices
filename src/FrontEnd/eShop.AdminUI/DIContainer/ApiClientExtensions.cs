@@ -3,7 +3,7 @@ using eShop.AdminUI.Services.Generic;
 using eShop.AdminUI.Services.IdentityApi;
 using eShop.AdminUI.Services.ProductApi;
 
-namespace eShop.AdminUI.Container
+namespace eShop.AdminUI.DIContainer
 {
     public static class ApiClientExtensions
     {

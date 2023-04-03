@@ -2,5 +2,5 @@
 
 public static class ExchangeConstants
 {
-    public const string OrderExchange = "OrderExchange";
+    public const string OrderExchange = "Order";
 }

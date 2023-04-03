@@ -1,5 +1,5 @@
 ﻿using eShop.ProductApi.DataAccess;
-using eShop.ProductApi.Entity;
+using eShop.ProductApi.Domain;
 using eShop.ProductApi.Notifications;
 using FluentValidation;
 using MediatR;

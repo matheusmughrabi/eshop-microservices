@@ -1,6 +1,4 @@
-﻿using eShop.ProductApi.Entity;
-
-namespace eShop.ProductApi.Domain;
+﻿namespace eShop.ProductApi.Domain;
 
 public class CategoryGroupEntity : BaseEntity
 {
