@@ -12,7 +12,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         IConfiguration configuration = hostContext.Configuration;
-        services.AddHostedService<StartOrderCommandConsumer>();
+        services.AddHostedService<StartOrderCommandConsumer>(); 
         services.AddHostedService<StockValidatedEventConsumer>();
         services.Configure<RabbitMQConfiguration>(configuration.GetSection("RabbitMQ"));
         services.AddSingleton<IMessageBus, RabbitMessageBus>();
